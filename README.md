@@ -1,0 +1,2 @@
+# havaschedule-ionic
+Ionic deploy
