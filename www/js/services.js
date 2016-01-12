@@ -51,26 +51,23 @@ angular.module('havaschedule.services', [])
 		getRoster: getRoster,
 		getCurrentTime: getCurrentTime,
 		isDebug: isDebug
-};
+	};
 })
 
 .factory('dateTimeServices', function($filter, dataServices) {
 
-	var dayOfWeekString = function(currentDateTime) {
-		// var d = new Date();
-		var date = $filter('date')(currentDateTime, 'EEE').toUpperCase();
+	var dayOfWeekString = function() {
+		var date = $filter('date')(dataServices.getCurrentTime(), 'EEE').toUpperCase();
 		return date;
 	};
 
-	var dateString = function(currentDateTime) {
-		// var d = new Date();
-		var date = $filter('date')(currentDateTime, 'MMM dd').toUpperCase();
+	var dateString = function() {
+		var date = $filter('date')(dataServices.getCurrentTime(), 'MMM dd').toUpperCase();
 		return date;
 	};
 
-	var timeString = function(currentDateTime) {
-		// var d = new Date();
-		var date = $filter('date')(currentDateTime, 'HH:mm:ss');
+	var timeString = function() {
+		var date = $filter('date')(dataServices.getCurrentTime(), 'HH:mm:ss');
 		return date;
 	};
 
@@ -82,14 +79,15 @@ angular.module('havaschedule.services', [])
 
 })
 
-.factory('timeCalcServices', function(dataServices) {
+.factory('timeCalcServices', function(dataServices, dateFilter) {
 	// see:  http://tools.ietf.org/html/rfc2822#section-3.3 for date-time parse format; I give up for now...
+	/*
+		returns TRUE if t1 < t2, where t1 and t2 are specified
+		as strings in the form HH:mm
+	*/
 	var isBefore = function(t1String, t2String) {
-
-		var currentDateTime = dataServices.getCurrentTime();
-		var t1Date = getTimeFromString(t1String, currentDateTime);
-		var t2Date = getTimeFromString(t2String, currentDateTime);
-
+		var t1Date = getTimeFromString(t1String);
+		var t2Date = getTimeFromString(t2String);
 		if (t1Date.getTime() < t2Date.getTime()) {
 			return true;
 		} else {
@@ -97,44 +95,65 @@ angular.module('havaschedule.services', [])
 		}
 	};
 
+/*
+		converts a string in the form HH:mm to a
+		javascript Date() object
+*/
 	var getTimeFromString = function(timeString) {
 		var timeStrings = timeString.split(':');
 		var tDate = dataServices.getCurrentTime();
 		tDate.setHours(timeStrings[0]);
 		tDate.setMinutes(timeStrings[1]);
 		tDate.setSeconds('0');
-
 		return tDate;
 	};
 
+/*
+		adds a number of minutes to a time,
+		specified as a HH:mm string.
+*/
 	var addToTimeString = function(timeString, minutes) {
-		var currentDateTime = dataServices.getCurrentTime();
-		var theTime = getTimeFromString(timeString, currentDateTime);
-		theTime.setMinutes(theTime.getMinutes() + minutes);
-		return theTime.getHours() + ':' + theTime.getMinutes();
+		// console.log('addToTimeString(' + timeString + ', ' + minutes + ')');
+		var theTime = getTimeFromString(timeString);
+		var resultTime = new Date(theTime.getTime() + minutes * 60000);
+		// console.log('addToTimeString result ->' + resultTime);
+		// var hours = resultTime.getHours();
+		// var theMinutes = resultTime.getMinutes();
+		// // console.log('hours:' + hours + '; minutes: ' + theMinutes);
+		// if (hours < 10) { hours = '0' + hours.toString();}
+		// if (theMinutes < 10) { theMinutes = '0' + theMinutes.toString();}
+		var result = dateFilter(resultTime, "HH:mm:ss");
+		// console.log('addToTimeString returning ' + result);
+		return result;
 	};
 
+/*
+	iterates through the current bellschedule.  For each period,
+	calculate the start and end times, and check whether
+	start < current < end.  Returns the array representing
+	the period.
+*/
 	var calcBell = function(bellschedule) {
 		var currentDateTime = dataServices.getCurrentTime();
+		// gets the array of periods from the bellschedule object
 		var periods = bellschedule[1].periods;
 
 		var foundPeriod;
-		var timeNow = currentDateTime;
-		var timeNowMinutes = timeNow.getMinutes();
-		if(timeNowMinutes < 10) {
-			timeNowMinutes = '0' + timeNowMinutes;
-		}
-		var timeNowString = timeNow.getHours() + ':' + timeNowMinutes;
-
+		var timeNow = dataServices.getCurrentTime();
+		var timeNowString = dateFilter(timeNow, "HH:mm:ss");
+		// var timeNowMinutes = timeNow.getMinutes();
+		// if(timeNowMinutes < 10) {
+		// 	timeNowMinutes = '0' + timeNowMinutes;
+		// }
+		// var timeNowString = timeNow.getHours() + ':' + timeNowMinutes;
+		console.log("calcBell:  current time = " + timeNowString);
 		for (var periodID in periods) {
 			var periodStart = periods[periodID].start;
 			var periodDuration = periods[periodID].duration;
-			// console.log(periodStart + " + " + periodDuration);
-			var periodEnd = addToTimeString(periodStart, periodDuration, currentDateTime);
-			// console.log(periodStart + " - " + periodEnd);
-
-			if (isBefore(periodStart, timeNowString, currentDateTime)) {
-				if (isBefore(timeNowString, periodEnd, currentDateTime)) {
+			var periodEnd = addToTimeString(periodStart, periodDuration);
+			console.log('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
+			if (isBefore(periodStart, timeNowString)) {
+				if (isBefore(timeNowString, periodEnd)) {
 					foundPeriod = periods[periodID];
 				}
 			}

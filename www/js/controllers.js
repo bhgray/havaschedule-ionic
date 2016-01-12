@@ -46,9 +46,7 @@ angular.module('havaschedule.controllers', [])
 
 .controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
   function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
-    $scope.format = "HH:mm:ss";
     var currentDateTimeWithDebug = dataServices.getCurrentTime($scope.debug);
-    // if ($scope.debug) {console.log(currentDateTimeWithDebug);}
     $scope.theDate = dateTimeServices.dateString(currentDateTimeWithDebug);
     $scope.theWeekday = dateTimeServices.dayOfWeekString(currentDateTimeWithDebug);
 
@@ -69,18 +67,15 @@ angular.module('havaschedule.controllers', [])
       $scope.thePeriod = 'not during school hours';
       $scope.periodStart = '';
       $scope.periodEnd = '';
+      $scope.notSchoolHours = true;
     } else {
+      $scope.notSchoolHours = false;
       $scope.thePeriod = activePeriod.name;
       var theRosteredClass = timeCalcServices.getRosteredClass(activePeriod, roster);
       $scope.theClass = theRosteredClass.name;
       $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.start), "MMM dd, yyyy HH:mm:ss");
-      // console.log($scope.periodStartDateTimeString);
       $scope.periodStartString = activePeriod.start;
       $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
-      // console.log('period ends at -> ' + $scope.periodEndString);
       $scope.periodEndDateTimeString = dateFilter(timeCalcServices.getTimeFromString($scope.periodEndString), "MMM dd, yyyy HH:mm:ss");
-      // console.log('period end string -> ' + $scope.periodEndDateTimeString);
     }
-
-
   }]);
