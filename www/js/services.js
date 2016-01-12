@@ -98,21 +98,16 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getTimeFromString = function(timeString) {
-		// console.log('getTimeFromString(' + timeString + ')');
 		var timeStrings = timeString.split(':');
-		// console.log('getTimeFromString uses ' + timeStrings);
 		var tDate = dataServices.getCurrentTime();
-		// console.log('getTimeFromString date assumed:  ' + tDate);
 		tDate.setHours(timeStrings[0]);
 		tDate.setMinutes(timeStrings[1]);
 		tDate.setSeconds('0');
-		// console.log('getTimeFromString date result:  ' + tDate);
 
 		return tDate;
 	};
 
 	var addToTimeString = function(timeString, minutes) {
-		// console.log('addToTimeString(' + timeString + ', ' + minutes + ')');
 		var currentDateTime = dataServices.getCurrentTime();
 		var theTime = getTimeFromString(timeString, currentDateTime);
 		theTime.setMinutes(theTime.getMinutes() + minutes);
@@ -171,6 +166,10 @@ angular.module('havaschedule.services', [])
 		minutes = Math.floor(t / 60) % 60;
 		t -= minutes * 60;
 		seconds = t % 60;
+		if (days < 10) { days = '0' + days;}
+		if (hours < 10) { hours = '0' + hours;}
+		if (minutes < 10) { minutes = '0' + minutes;}
+		if (seconds < 10) { seconds = '0' + seconds;}
 		return [
 			hours,
 			minutes,
