@@ -44,11 +44,11 @@ angular.module('havaschedule.controllers', [])
   };
 })
 
-.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices',
-  function($scope, dateTimeServices, timeCalcServices, dataServices) {
+.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
+  function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     $scope.format = "HH:mm:ss";
     var currentDateTimeWithDebug = dataServices.getCurrentTime($scope.debug);
-    if ($scope.debug) {console.log(currentDateTimeWithDebug);}
+    // if ($scope.debug) {console.log(currentDateTimeWithDebug);}
     $scope.theDate = dateTimeServices.dateString(currentDateTimeWithDebug);
     $scope.theWeekday = dateTimeServices.dayOfWeekString(currentDateTimeWithDebug);
 
@@ -60,7 +60,8 @@ angular.module('havaschedule.controllers', [])
 
     var bellschedule = dataServices.getBellSchedules();
     var roster = dataServices.getRoster();
-    if ($scope.debug) {console.log(roster);}
+    // debug is no longer in $scope, but in dataServices
+    //if ($scope.debug) {console.log(roster);}
 
     var activePeriod = timeCalcServices.calcBell(bellschedule, currentDateTimeWithDebug);
     if (activePeriod === undefined) {
@@ -72,8 +73,13 @@ angular.module('havaschedule.controllers', [])
       $scope.thePeriod = activePeriod.name;
       var theRosteredClass = timeCalcServices.getRosteredClass(activePeriod, roster);
       $scope.theClass = theRosteredClass.name;
-      $scope.periodStart = activePeriod.start;
-      $scope.periodEnd = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
+      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.start), "MMM dd, yyyy HH:mm:ss");
+      // console.log($scope.periodStartDateTimeString);
+      $scope.periodStartString = activePeriod.start;
+      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
+      // console.log('period ends at -> ' + $scope.periodEndString);
+      $scope.periodEndDateTimeString = dateFilter(timeCalcServices.getTimeFromString($scope.periodEndString), "MMM dd, yyyy HH:mm:ss");
+      // console.log('period end string -> ' + $scope.periodEndDateTimeString);
     }
 
 

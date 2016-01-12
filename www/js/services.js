@@ -1,21 +1,21 @@
 angular.module('havaschedule.services', [])
 
 .factory('dataServices', function() {
-	var getBellSchedules = function() {
-		var bellschedule = [{name: 'Regular'},
-				{periods: [
-					{period: 0, name: 'Advisory', start: '07:50', duration: 16},
-					{period: 1, name: 'Period 1', start: '08:09', duration: 48},
-					{period: 2, name: 'Period 2', start: '09:00', duration: 48},
-					{period: 3, name: 'Period 3', start: '09:51', duration: 48},
-					{period: 4, name: 'Period 4', start: '10:42', duration: 48},
-					{period: 5, name: 'Period 5', start: '11:33', duration: 48},
-					{period: 6, name: 'Period 6', start: '12:24', duration: 48},
-					{period: 7, name: 'Period 7', start: '13:15', duration: 48},
-					{period: 8, name: 'Period 8', start: '14:06', duration: 48}
-				]}
-			];
-			return bellschedule;
+		var getBellSchedules = function() {
+			var bellschedule = [{name: 'Regular'},
+			{periods: [
+				{period: 0, name: 'Advisory', start: '07:50', duration: 16},
+				{period: 1, name: 'Period 1', start: '08:09', duration: 48},
+				{period: 2, name: 'Period 2', start: '09:00', duration: 48},
+				{period: 3, name: 'Period 3', start: '09:51', duration: 48},
+				{period: 4, name: 'Period 4', start: '10:42', duration: 48},
+				{period: 5, name: 'Period 5', start: '11:33', duration: 48},
+				{period: 6, name: 'Period 6', start: '12:24', duration: 48},
+				{period: 7, name: 'Period 7', start: '13:15', duration: 48},
+				{period: 8, name: 'Period 8', start: '14:06', duration: 48}
+			]}
+		];
+		return bellschedule;
 	};
 
 	var getRoster = function() {
@@ -34,13 +34,13 @@ angular.module('havaschedule.services', [])
 	};
 
 	var isDebug = function() {
-		return true;
+		return false;
 	};
 
 	var getCurrentTime = function() {
 		if (isDebug())
 		{
-			return new Date(2016, 01, 11, 14, 02, 0);
+			return new Date(2016, 01, 11, 11, 02, 0);
 		} else {
 			return new Date();
 		}
@@ -51,7 +51,7 @@ angular.module('havaschedule.services', [])
 		getRoster: getRoster,
 		getCurrentTime: getCurrentTime,
 		isDebug: isDebug
-	};
+};
 })
 
 .factory('dateTimeServices', function($filter, dataServices) {
@@ -73,6 +73,7 @@ angular.module('havaschedule.services', [])
 		var date = $filter('date')(currentDateTime, 'HH:mm:ss');
 		return date;
 	};
+
 	return {
 		dayOfWeekString: dayOfWeekString,
 		dateString: dateString,
@@ -99,10 +100,14 @@ angular.module('havaschedule.services', [])
 	var getTimeFromString = function(timeString) {
 		// console.log('getTimeFromString(' + timeString + ')');
 		var timeStrings = timeString.split(':');
+		// console.log('getTimeFromString uses ' + timeStrings);
 		var tDate = dataServices.getCurrentTime();
+		// console.log('getTimeFromString date assumed:  ' + tDate);
 		tDate.setHours(timeStrings[0]);
 		tDate.setMinutes(timeStrings[1]);
 		tDate.setSeconds('0');
+		// console.log('getTimeFromString date result:  ' + tDate);
+
 		return tDate;
 	};
 
@@ -154,10 +159,31 @@ angular.module('havaschedule.services', [])
 		return foundClass;
 	};
 
+	var countdownFormatString = function(t) {
+		var days, hours, minutes, seconds;
+		// huh?  this is returning -1 for day?  given an input of -2783?
+		if (t < 0) { t *= -1; }
+		days = Math.floor(t / 86400);
+		// console.log("cdfs days: " + days);
+		t -= days * 86400;
+		hours = Math.floor(t / 3600) % 24;
+		t -= hours * 3600;
+		minutes = Math.floor(t / 60) % 60;
+		t -= minutes * 60;
+		seconds = t % 60;
+		return [
+			hours,
+			minutes,
+			seconds
+		].join(':');
+	};
+
 	return {
 		isBefore: isBefore,
 		addToTimeString: addToTimeString,
 		calcBell: calcBell,
-		getRosteredClass: getRosteredClass
+		getTimeFromString: getTimeFromString,
+		getRosteredClass: getRosteredClass,
+		countdownFormatString: countdownFormatString
 	};
 });

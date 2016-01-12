@@ -1,4 +1,25 @@
 angular.module('havaschedule.directives', [])
+// note:  http://codepen.io/garethdweaver/pen/eNpWBb for timer ideas
+.directive('countdown', ['timeCalcServices', '$interval', 'dateFilter',
+function(timeCalcServices, dateFilter, $interval) {
+
+  var theTimer;
+
+  function diff(future, element) {
+      // pass along the difference in seconds.
+      var result = Math.floor((future.getTime() - new Date().getTime()) / 1000);
+      var timeDiffString = timeCalcServices.countdownFormatString(result);
+      return element.text(timeDiffString);
+  }
+  return {
+    restrict: 'A',
+    scope: { date: '@' },
+    link: function (scope, element) {
+      var future = new Date(scope.date);
+      theTimer = $interval(diff(future, element), 1000);
+    }
+  };
+}])
 
 .directive('theCurrentTime', ['$interval', 'dateFilter',
 function($interval, dateFilter) {

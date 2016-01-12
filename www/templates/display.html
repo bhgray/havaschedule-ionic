@@ -13,11 +13,11 @@
       <a href="#" class="item">{{theClass}}</a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
-        Start:  {{periodStart}} (15:31:01 since start)
+        Start:  {{periodStartString}} (<span countdown='' date={{periodStartDateTimeString}}> &nbsp;</span> since start)
       </a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
-        End:  {{periodEnd}} (15:04:05 remains)
+        End:  {{periodEndString}} (<span countdown='' date={{periodEndDateTimeString}}> &nbsp;</span>  remains)
       </a>
     </div>
 
