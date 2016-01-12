@@ -1,6 +1,9 @@
-angular.module('starter.controllers', [])
+angular.module('havaschedule.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+
+  // debug
+  $scope.debug = true;
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -41,16 +44,37 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
+.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices',
+  function($scope, dateTimeServices, timeCalcServices, dataServices) {
+    $scope.format = "HH:mm:ss";
+    var currentDateTimeWithDebug = dataServices.getCurrentTime($scope.debug);
+    if ($scope.debug) {console.log(currentDateTimeWithDebug);}
+    $scope.theDate = dateTimeServices.dateString(currentDateTimeWithDebug);
+    $scope.theWeekday = dateTimeServices.dayOfWeekString(currentDateTimeWithDebug);
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
-});
+    /*
+        bellschedule is a two-element array.
+        Element 1:  an array of configuration details
+        Element 2:  an array of periods
+    */
+
+    var bellschedule = dataServices.getBellSchedules();
+    var roster = dataServices.getRoster();
+    if ($scope.debug) {console.log(roster);}
+
+    var activePeriod = timeCalcServices.calcBell(bellschedule, currentDateTimeWithDebug);
+    if (activePeriod === undefined) {
+      $scope.theClass = '';
+      $scope.thePeriod = 'not during school hours';
+      $scope.periodStart = '';
+      $scope.periodEnd = '';
+    } else {
+      $scope.thePeriod = activePeriod.name;
+      var theRosteredClass = timeCalcServices.getRosteredClass(activePeriod, roster);
+      $scope.theClass = theRosteredClass.name;
+      $scope.periodStart = activePeriod.start;
+      $scope.periodEnd = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
+    }
+
+
+  }]);

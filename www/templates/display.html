@@ -1,0 +1,47 @@
+<ion-view view-title="HavaSchedule">
+  <ion-content>
+    <div class="list card">
+      <div class="item item-divider">Today</div>
+      <a href="#" class="item">{{theDate}}</a>
+      <a href="#" class="item">{{theWeekday}}</a>
+      <a href="#" class="item"><the-current-time></the-current-time></a>
+    </div>
+
+    <div class="list card">
+      <div class="item item-divider">Now</div>
+      <a href="#" class="item">{{thePeriod}}</a>
+      <a href="#" class="item">{{theClass}}</a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        Start:  {{periodStart}} (15:31:01 since start)
+      </a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        End:  {{periodEnd}} (15:04:05 remains)
+      </a>
+    </div>
+
+    <div class="list card">
+      <div class="item item-divider">
+        Timers
+      </div>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-android-alarm-clock"></i>
+        Every 10 minutes
+      </a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-android-alarm-clock"></i>
+        10 before end
+      </a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-android-alarm-clock"></i>
+        5 before end
+      </a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-android-alarm-clock"></i>
+        1 before end
+      </a>
+    </div>
+
+  </ion-content>
+</ion-view>
