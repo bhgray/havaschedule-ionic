@@ -28,8 +28,8 @@ function(timeCalcServices, dateFilter, $interval) {
   };
 }])
 
-.directive('counttimer', ['$interval', 'dateFilter', 'timeCalcServices',
-function($interval, dateFilter, timeCalcServices) {
+.directive('counttimer', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices',
+function($interval, dateFilter, timeCalcServices, dataServices) {
 
   return function(scope, element, attrs) {
     var stopTimer;
@@ -43,7 +43,8 @@ function($interval, dateFilter, timeCalcServices) {
 
     function updateTime() {
       // console.log('attrs -> ' + attrs.date);
-      var present = new Date().getTime();
+      var d = dataServices.getCurrentTime();
+      var present = d.getTime();
       var future = new Date(attrs.date).getTime();
       element.text(timeDiff(future, present));
     }
@@ -61,9 +62,9 @@ function($interval, dateFilter, timeCalcServices) {
 
 }])
 
-.directive('theCurrentTime', ['$interval', 'dateFilter',
-function($interval, dateFilter) {
+.directive('theCurrentTime', ['$interval', 'dateFilter', 'dataServices',
 
+function($interval, dateFilter, dataServices) {
   // return the directive link function. (compile function not needed)
   return function(scope, element, attrs) {
     var format;  // date format string
@@ -71,14 +72,9 @@ function($interval, dateFilter) {
 
     // used to update the UI
     function updateTime() {
-      element.text(dateFilter(new Date(), "HH:mm:ss"));
+      var d = dataServices.getCurrentTime();
+      element.text(dateFilter(d, "HH:mm:ss"));
     }
-
-    // watch the expression, and update the UI on change.
-    scope.$watch(attrs.myCurrentTime, function(value) {
-      format = value;
-      updateTime();
-    });
 
     stopTime = $interval(updateTime, 1000);
 

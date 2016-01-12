@@ -5,10 +5,21 @@
       <a href="#" class="item">{{theDate}}</a>
       <a href="#" class="item">{{theWeekday}}</a>
       <a href="#" class="item"><the-current-time></the-current-time></a>
+      <a href="#" class="item" ng-hide="debug"></a>
     </div>
 
-    <div class="list card" ng-hide="notSchoolHours">
-      <div class="item item-divider">Now</div>
+    <div class="list card" ng-hide="hidePassingTimeDiv">
+      <div class="item item-divider">Passing Time</div>
+      <a href="#" class="item">{{thePeriod}}</a>
+      <a href="#" class="item">{{theClass}}</a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        Next class starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
+      </a>
+    </div>
+
+    <div class="list card" ng-hide="hideInClassDIV">
+      <div class="item item-divider">{{thePeriod}}</div>
       <a href="#" class="item">{{thePeriod}}</a>
       <a href="#" class="item">{{theClass}}</a>
       <a href="#" class="item item-icon-left">

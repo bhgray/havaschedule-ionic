@@ -1,5 +1,7 @@
 angular.module('havaschedule.services', [])
 
+.constant('FOUND_PERIOD', {'PASSING_TIME': '-2', 'NOT_SCHOOL_HOURS':-1})
+
 .factory('dataServices', function() {
 		var getBellSchedules = function() {
 			var bellschedule = [{name: 'Regular'},
@@ -34,13 +36,13 @@ angular.module('havaschedule.services', [])
 	};
 
 	var isDebug = function() {
-		return false;
+		return true;
 	};
 
 	var getCurrentTime = function() {
 		if (isDebug())
 		{
-			return new Date(2016, 01, 11, 11, 02, 0);
+			return new Date(2016, 0, 11, 8, 7, 0);
 		} else {
 			return new Date();
 		}
@@ -94,7 +96,6 @@ angular.module('havaschedule.services', [])
 			return false;
 		}
 	};
-
 /*
 		converts a string in the form HH:mm to a
 		javascript Date() object
@@ -136,26 +137,28 @@ angular.module('havaschedule.services', [])
 	var calcBell = function(bellschedule) {
 		var currentDateTime = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
-		var periods = bellschedule[1].periods;
 
-		var foundPeriod;
+		var periods = bellschedule[1].periods;
+		var foundPeriod = -1;
 		var timeNow = dataServices.getCurrentTime();
 		var timeNowString = dateFilter(timeNow, "HH:mm:ss");
-		// var timeNowMinutes = timeNow.getMinutes();
-		// if(timeNowMinutes < 10) {
-		// 	timeNowMinutes = '0' + timeNowMinutes;
-		// }
-		// var timeNowString = timeNow.getHours() + ':' + timeNowMinutes;
-		console.log("calcBell:  current time = " + timeNowString);
-		for (var periodID in periods) {
+
+		// console.log("calcBell:  current time = " + timeNowString);
+		for (var periodID = 0; periodID < periods.length; periodID++) {
 			var periodStart = periods[periodID].start;
 			var periodDuration = periods[periodID].duration;
 			var periodEnd = addToTimeString(periodStart, periodDuration);
-			console.log('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
-			if (isBefore(periodStart, timeNowString)) {
-				if (isBefore(timeNowString, periodEnd)) {
-					foundPeriod = periods[periodID];
+			// console.log('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
+			if (periodID < periods.length - 1) {
+				var nextID = periodID + 1;
+				var nextPeriodStart = periods[periodID + 1].start;
+				// console.log(nextPeriodStart);
+				if (isBefore(periodEnd, timeNowString) && isBefore(timeNowString, nextPeriodStart)) {
+					foundPeriod = -2;	// passing time!
 				}
+			}
+			if (isBefore(periodStart, timeNowString) && isBefore(timeNowString, periodEnd)) {
+					foundPeriod = periods[periodID];
 			}
 		}
 		return foundPeriod;

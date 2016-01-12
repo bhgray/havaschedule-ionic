@@ -1,9 +1,13 @@
 angular.module('havaschedule.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.constant('PASSING_TIME', '-2')
+.constant('NOT_SCHOOL_HOURS', '-1')
+
+.controller('AppCtrl',
+  function($scope, $ionicModal, $timeout, dataServices) {
 
   // debug
-  $scope.debug = true;
+  // $scope.debug = dataServices.isDebug();
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -46,7 +50,8 @@ angular.module('havaschedule.controllers', [])
 
 .controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
   function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
-    var currentDateTimeWithDebug = dataServices.getCurrentTime($scope.debug);
+    $scope.debug = dataServices.isDebug();
+    var currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
     $scope.theDate = dateTimeServices.dateString(currentDateTimeWithDebug);
     $scope.theWeekday = dateTimeServices.dayOfWeekString(currentDateTimeWithDebug);
 
@@ -58,16 +63,21 @@ angular.module('havaschedule.controllers', [])
 
     var bellschedule = dataServices.getBellSchedules();
     var roster = dataServices.getRoster();
-    // debug is no longer in $scope, but in dataServices
-    //if ($scope.debug) {console.log(roster);}
-
     var activePeriod = timeCalcServices.calcBell(bellschedule, currentDateTimeWithDebug);
-    if (activePeriod === undefined) {
+    if (activePeriod === -1) {        // not during school hours
       $scope.theClass = '';
       $scope.thePeriod = 'not during school hours';
       $scope.periodStart = '';
       $scope.periodEnd = '';
-      $scope.notSchoolHours = true;
+      $scope.hideInClassDIV = true;
+      $scope.hidePassingTimeDiv = true;
+    } else if (activePeriod === -2) {   // passing time.  must find a way to do constants
+      $scope.theClass = '';
+      $scope.thePeriod = '';
+      $scope.periodStart = '';
+      $scope.periodEnd = '';
+      $scope.hideInClassDIV=true;
+      $scope.hidePassingTimeDiv = false;
     } else {
       $scope.notSchoolHours = false;
       $scope.thePeriod = activePeriod.name;
