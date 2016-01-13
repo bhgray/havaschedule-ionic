@@ -64,28 +64,37 @@ angular.module('havaschedule.controllers', [])
     var bellschedule = dataServices.getBellSchedules();
     var roster = dataServices.getRoster();
     var activePeriod = timeCalcServices.calcBell(bellschedule, currentDateTimeWithDebug);
-    if (activePeriod === -1) {        // not during school hours
+    var theRosteredClass;
+    if (activePeriod.status == 'not during school hours') {        // not during school hours
+      console.log('activating non school hours mode');
+      $scope.inClassDIV = false;
+      $scope.passingTimeDiv = false;
+      $scope.classTimers = false;
       $scope.theClass = '';
-      $scope.thePeriod = 'not during school hours';
+      $scope.thePeriod = activePeriod.status;
       $scope.periodStart = '';
       $scope.periodEnd = '';
-      $scope.hideInClassDIV = true;
-      $scope.hidePassingTimeDiv = true;
-    } else if (activePeriod === -2) {   // passing time.  must find a way to do constants
-      $scope.theClass = '';
-      $scope.thePeriod = '';
-      $scope.periodStart = '';
-      $scope.periodEnd = '';
-      $scope.hideInClassDIV=true;
-      $scope.hidePassingTimeDiv = false;
-    } else {
-      $scope.notSchoolHours = false;
-      $scope.thePeriod = activePeriod.name;
-      var theRosteredClass = timeCalcServices.getRosteredClass(activePeriod, roster);
+    } else if (activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
+      console.log('activating passing time mode');
+      $scope.inClassDIV = false;
+      $scope.passingTimeDiv = true;
+      $scope.classTimers = false;
+      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
-      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.start), "MMM dd, yyyy HH:mm:ss");
-      $scope.periodStartString = activePeriod.start;
-      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
+      $scope.thePeriod = activePeriod.period.name;
+      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartString = activePeriod.period.start;
+      $scope.periodEnd = '';
+    } else {
+      $scope.inClassDiv = true;
+      $scope.passingTimeDiv = false;
+      $scope.classTimers = true;
+      $scope.thePeriod = activePeriod.period.name;
+      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
+      $scope.theClass = theRosteredClass.name;
+      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartString = activePeriod.period.start;
+      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.period.start, activePeriod.period.duration);
       $scope.periodEndDateTimeString = dateFilter(timeCalcServices.getTimeFromString($scope.periodEndString), "MMM dd, yyyy HH:mm:ss");
     }
   }]);

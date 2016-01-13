@@ -1,4 +1,12 @@
 {
   "name": "havaschedule",
-  "app_id": "0c733c75"
+  "app_id": "0c733c75",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
 }

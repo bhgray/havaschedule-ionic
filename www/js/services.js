@@ -36,13 +36,13 @@ angular.module('havaschedule.services', [])
 	};
 
 	var isDebug = function() {
-		return true;
+		return false;
 	};
 
 	var getCurrentTime = function() {
 		if (isDebug())
 		{
-			return new Date(2016, 0, 11, 8, 7, 0);
+			return new Date(2016, 0, 11, 11, 31, 0);
 		} else {
 			return new Date();
 		}
@@ -101,6 +101,7 @@ angular.module('havaschedule.services', [])
 		javascript Date() object
 */
 	var getTimeFromString = function(timeString) {
+		// console.log('getTimeFromString(' + timeString +')');
 		var timeStrings = timeString.split(':');
 		var tDate = dataServices.getCurrentTime();
 		tDate.setHours(timeStrings[0]);
@@ -123,23 +124,24 @@ angular.module('havaschedule.services', [])
 		// // console.log('hours:' + hours + '; minutes: ' + theMinutes);
 		// if (hours < 10) { hours = '0' + hours.toString();}
 		// if (theMinutes < 10) { theMinutes = '0' + theMinutes.toString();}
-		var result = dateFilter(resultTime, "HH:mm:ss");
+		var result = dateFilter(resultTime, "HH:mm");
 		// console.log('addToTimeString returning ' + result);
 		return result;
 	};
 
 /*
 	iterates through the current bellschedule.  For each period,
-	calculate the start and end times, and check whether
-	start < current < end.  Returns the array representing
-	the period.
+	calculate the start and end times, and check whether:
+		* start < current < end (meaning we are in this period -- return it)
+		* end < current < next period start (meaning we are in passing time -- return the next period).
+		Returns an object consisting of
+		{status:  'some status message', period: the array representing the appropriate period}
 */
 	var calcBell = function(bellschedule) {
 		var currentDateTime = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
-
 		var periods = bellschedule[1].periods;
-		var foundPeriod = -1;
+		var foundPeriod = {status: 'not during school hours', period: null};
 		var timeNow = dataServices.getCurrentTime();
 		var timeNowString = dateFilter(timeNow, "HH:mm:ss");
 
@@ -154,11 +156,11 @@ angular.module('havaschedule.services', [])
 				var nextPeriodStart = periods[periodID + 1].start;
 				// console.log(nextPeriodStart);
 				if (isBefore(periodEnd, timeNowString) && isBefore(timeNowString, nextPeriodStart)) {
-					foundPeriod = -2;	// passing time!
+					foundPeriod = {status: 'passing time', period: periods[periodID + 1]};	// passing time!
 				}
 			}
 			if (isBefore(periodStart, timeNowString) && isBefore(timeNowString, periodEnd)) {
-					foundPeriod = periods[periodID];
+					foundPeriod = {status: 'during school', period: periods[periodID]};
 			}
 		}
 		return foundPeriod;
