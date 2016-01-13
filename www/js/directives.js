@@ -2,34 +2,8 @@ angular.module('havaschedule.directives', [])
 
 // note:  http://codepen.io/garethdweaver/pen/eNpWBb for timer ideas
 
-.directive('countdown', ['timeCalcServices', '$interval', 'dateFilter',
-function(timeCalcServices, dateFilter, $interval) {
-
-  var theTimer;
-
-  function diff(future, element) {
-    // pass along the difference in seconds.
-    var result = Math.floor((future.getTime() - new Date().getTime()) / 1000);
-    var timeDiffString = timeCalcServices.countdownFormatString(result);
-    return element.text(timeDiffString);
-  }
-
-  return {
-    restrict: 'AE', // restricted to attribute or element
-    scope: { date: '@' },   //meaning date as the attribute in the tag
-    link: function (scope, element, attrs) {
-      var future = new Date(scope.date);
-      theTimer = $interval(diff(future, element), 1000);
-      // timer must be explicitly destroyed if the element is removed from the DOM
-      element.on('$destroy', function() {
-        $interval.cancel(theTimer);
-      });
-    }
-  };
-}])
-
-.directive('counttimer', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices',
-function($interval, dateFilter, timeCalcServices, dataServices) {
+.directive('counttimer', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout',
+function($interval, dateFilter, timeCalcServices, dataServices, $timeout) {
 
   return function(scope, element, attrs) {
     var stopTimer;
@@ -46,7 +20,20 @@ function($interval, dateFilter, timeCalcServices, dataServices) {
       var d = dataServices.getCurrentTime();
       var present = d.getTime();
       var future = new Date(attrs.date).getTime();
-      element.text(timeDiff(future, present));
+      var delta = timeDiff(future, present);
+      var result = Math.floor((future - present) / 1000);
+      if (result === 0) {
+        console.log('period over! at ' + dateFilter(d, "yyyy-mm-dd HH:mm:ss"));
+        $timeout(function() {
+          scope.updateDateUI();
+          scope.updatePeriodUI();
+        }, 1000);
+      }
+      d = dataServices.getCurrentTime();
+      present = d.getTime();
+      future = new Date(attrs.date).getTime();
+      delta = timeDiff(future, present);
+      element.text(delta);
     }
 
     // var count = timeDiff(future);
