@@ -4,7 +4,7 @@ angular.module('havaschedule.controllers', [])
 .constant('NOT_SCHOOL_HOURS', '-1')
 
 .controller('AppCtrl',
-  function($scope, $ionicModal, $timeout, dataServices) {
+function($scope, $ionicModal, $timeout, dataServices) {
 
   // debug
   // $scope.debug = dataServices.isDebug();
@@ -49,43 +49,73 @@ angular.module('havaschedule.controllers', [])
 })
 
 .controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
-  function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
-    $scope.debug = dataServices.isDebug();
-    var currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
-    $scope.theDate = dateTimeServices.dateString(currentDateTimeWithDebug);
-    $scope.theWeekday = dateTimeServices.dayOfWeekString(currentDateTimeWithDebug);
+  // dumb programmer note:  the dependencies above ONLY need to get injected into the
+  // controller function ONCE (below).  They are available as scoped variables to every
+  // inner function w/out further injection.  Neat!
+function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
 
+  $scope.currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
+  // $scope.$watch('currentDateTimeWithDebug', function(newValue, oldValue) {
+  //   console.log('watch called with ' + newValue);
+  //   $scope.updateDateUI();
+  //   $scope.updatePeriodUI();
+  // });
+
+  $scope.updateDateUI = function() {
+    console.log('updateDateUI');
+    $scope.theDate = dateTimeServices.dateString($scope.currentDateTimeWithDebug);
+    $scope.theWeekday = dateTimeServices.dayOfWeekString($scope.currentDateTimeWithDebug);
+  };
+
+  $scope.updatePeriodUI = function() {
     /*
-        bellschedule is a two-element array.
-        Element 1:  an array of configuration details
-        Element 2:  an array of periods
+    bellschedule is a two-element array.
+    Element 1:  an array of configuration details
+    Element 2:  an array of periods
     */
 
     var bellschedule = dataServices.getBellSchedules();
     var roster = dataServices.getRoster();
-    var activePeriod = timeCalcServices.calcBell(bellschedule, currentDateTimeWithDebug);
-    if (activePeriod === -1) {        // not during school hours
+    var activePeriod = timeCalcServices.calcBell(bellschedule);
+    var theRosteredClass;
+    console.log('updatePeriodUI found:  ' + activePeriod.status);
+
+    if (activePeriod.status == 'not during school hours') {        // not during school hours
+      console.log('activating non school hours mode');
+      $scope.inClassDiv = false;
+      $scope.passingTimeDiv = false;
+      $scope.classTimers = false;
       $scope.theClass = '';
-      $scope.thePeriod = 'not during school hours';
+      $scope.thePeriod = activePeriod.status;
       $scope.periodStart = '';
       $scope.periodEnd = '';
-      $scope.hideInClassDIV = true;
-      $scope.hidePassingTimeDiv = true;
-    } else if (activePeriod === -2) {   // passing time.  must find a way to do constants
-      $scope.theClass = '';
-      $scope.thePeriod = '';
-      $scope.periodStart = '';
-      $scope.periodEnd = '';
-      $scope.hideInClassDIV=true;
-      $scope.hidePassingTimeDiv = false;
-    } else {
-      $scope.notSchoolHours = false;
-      $scope.thePeriod = activePeriod.name;
-      var theRosteredClass = timeCalcServices.getRosteredClass(activePeriod, roster);
+    } else if (activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
+      console.log('activating passing time mode');
+      $scope.inClassDiv = false;
+      $scope.passingTimeDiv = true;
+      $scope.classTimers = false;
+      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
-      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.start), "MMM dd, yyyy HH:mm:ss");
-      $scope.periodStartString = activePeriod.start;
-      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.start, activePeriod.duration);
+      $scope.thePeriod = activePeriod.period.name;
+      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartString = activePeriod.period.start;
+      $scope.periodEnd = '';
+    } else {
+      console.log('activating during school mode');
+      $scope.inClassDiv = true;
+      $scope.passingTimeDiv = false;
+      $scope.classTimers = true;
+      $scope.thePeriod = activePeriod.period.name;
+      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
+      $scope.theClass = theRosteredClass.name;
+      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartString = activePeriod.period.start;
+      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.period.start, activePeriod.period.duration);
       $scope.periodEndDateTimeString = dateFilter(timeCalcServices.getTimeFromString($scope.periodEndString), "MMM dd, yyyy HH:mm:ss");
     }
-  }]);
+  };
+
+  $scope.updateDateUI();
+  $scope.updatePeriodUI();
+
+}]);

@@ -7,7 +7,7 @@ angular.module('havaschedule', [
   'havaschedule.directives'
 ])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $rootScope, dateFilter) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -22,7 +22,8 @@ angular.module('havaschedule', [
     }
   });
 
-  console.log("run app.js");
+  $rootScope.appStartTime = new Date();
+  console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
 
 })
 
