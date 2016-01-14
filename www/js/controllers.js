@@ -6,15 +6,13 @@ angular.module('havaschedule.controllers', [])
 .controller('AppCtrl',
 function($scope, $ionicModal, $timeout, dataServices) {
 
-  // debug
-  // $scope.debug = dataServices.isDebug();
-
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  // $scope.$on('$ionicView.enter', function(e) {
+  //   // console.log('$ionicView.enter triggered (see app.js)');
+  // });
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -78,7 +76,7 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     var roster = dataServices.getRoster();
     var activePeriod = timeCalcServices.calcBell(bellschedule);
     var theRosteredClass;
-    console.log('updatePeriodUI found:  ' + activePeriod.status);
+    console.log('updatePeriodUI found:  ' + activePeriod.status + (activePeriod.name === null?'':' ' + activePeriod.period.name));
 
     if (activePeriod.status == 'not during school hours') {        // not during school hours
       console.log('activating non school hours mode');

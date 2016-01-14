@@ -21,18 +21,18 @@ function($interval, dateFilter, timeCalcServices, dataServices, $timeout) {
       var present = d.getTime();
       var future = new Date(attrs.date).getTime();
       var delta = timeDiff(future, present);
-      var result = Math.floor((future - present) / 1000);
-      if (result === 0) {
-        console.log('period over! at ' + dateFilter(d, "yyyy-mm-dd HH:mm:ss"));
-        $timeout(function() {
-          scope.updateDateUI();
-          scope.updatePeriodUI();
-        }, 1000);
-      }
-      d = dataServices.getCurrentTime();
-      present = d.getTime();
-      future = new Date(attrs.date).getTime();
-      delta = timeDiff(future, present);
+      // var result = Math.floor((future - present) / 1000);
+      // if (result === 0) {
+      //   console.log('period over! at ' + dateFilter(d, "yyyy-mm-dd HH:mm:ss"));
+      //   $timeout(function() {
+      //     scope.updateDateUI();
+      //     scope.updatePeriodUI();
+      //   }, 1000);
+      // }
+      // d = dataServices.getCurrentTime();
+      // present = d.getTime();
+      // future = new Date(attrs.date).getTime();
+      // delta = timeDiff(future, present);
       element.text(delta);
     }
 
@@ -57,9 +57,29 @@ function($interval, dateFilter, dataServices) {
     var format;  // date format string
     var stopTime; // so that we can cancel the time updates
 
+    // searches an array to match a given time
+    //  might need to be a bit imprecise about matching - we
+    // don't know if we will get this call at the very second it's due...
+    function findTimeInArray(element, index, array) {
+        var d = dataServices.getCurrentTime();
+        console.log('findTimeInArray comparing');
+        if (d.getHours() == element.getHours() && d.getMinutes() == element.getMinutes()) {
+          return true;
+        }
+        return false;
+    }
+
     // used to update the UI
     function updateTime() {
       var d = dataServices.getCurrentTime();
+      // run the findTimeInArray method against all elements of theCurrentTime
+      // time notification list...  see if an update is required to the UI.
+      var matchingTimes = dataServices.getTimeNotificationList().find(findTimeInArray);
+      console.log('updateTime() in directive theCurrentTime --> matchingTimes:  ' + matchingTimes);
+      if (matchingTimes !== undefined) {
+        scope.updateDateUI();
+        scope.updatePeriodUI();
+      }
       element.text(dateFilter(d, "HH:mm:ss"));
     }
 

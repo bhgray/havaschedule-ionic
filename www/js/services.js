@@ -1,7 +1,5 @@
 angular.module('havaschedule.services', [])
 
-.constant('FOUND_PERIOD', {'PASSING_TIME': '-2', 'NOT_SCHOOL_HOURS':-1})
-
 .factory('dataServices', function($rootScope) {
 		var getBellSchedules = function() {
 			var bellschedule = [{name: 'Regular'},
@@ -18,6 +16,19 @@ angular.module('havaschedule.services', [])
 			]}
 		];
 		return bellschedule;
+	};
+
+	var getTimeNotificationList = function() {
+		var bells = getBellSchedules();
+		var times = [];
+		for (var periodID in bells.periods) {
+			var period = bells.periods[periodID];
+			var startTime = timeCalcServices.getTimeFromString(period.start);
+			times.push(startTime);
+			var endTime = new Date(startTime.getTime() + period.duration * 60000);
+			times.push(endTime);
+		}
+		return times;
 	};
 
 	var getRoster = function() {
@@ -44,7 +55,6 @@ angular.module('havaschedule.services', [])
 		var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
 		if (isDebug())
 		{
-			// console.log('getCurrentTime :: elapsed = ' + elapsed);
 			result = new Date(2016, 0, 11, 11, 29, 50);
 			result = new Date(result.getTime() + elapsed);
 		} else {
@@ -57,6 +67,7 @@ angular.module('havaschedule.services', [])
 		getBellSchedules: getBellSchedules,
 		getRoster: getRoster,
 		getCurrentTime: getCurrentTime,
+		getTimeNotificationList: getTimeNotificationList,
 		isDebug: isDebug
 	};
 })
