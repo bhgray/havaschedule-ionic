@@ -21,6 +21,11 @@ Ionic deploy
           the updates as close to the issuing time entity as possible (dataServices.getCurrenTime())
 
 
+          BUG:  passing time reverses the countdowns....  and fails to hide the class card;  
+            FIXED:  hid the class card.  the way passing time mode sends in the times still probably reverses the
+            countdown, but we don't care bc the card is not relevant/shown
+
+
   TODO:  refactor the statuses into a constant or enumeration?
 
   TODO:   check $scope usage throughout.  only controllers create a new $scope.  Thus DisplayCtl creates

@@ -78,11 +78,11 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     var roster = dataServices.getRoster();
     var activePeriod = timeCalcServices.calcBell(bellschedule);
     var theRosteredClass;
-    console.log('updatePeriodUI found:  ' + activePeriod.status + '; ' + activePeriod.period.name);
+    console.log('updatePeriodUI found:  ' + activePeriod.status);
 
     if (activePeriod.status == 'not during school hours') {        // not during school hours
       console.log('activating non school hours mode');
-      $scope.inClassDIV = false;
+      $scope.inClassDiv = false;
       $scope.passingTimeDiv = false;
       $scope.classTimers = false;
       $scope.theClass = '';
@@ -91,7 +91,7 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
       $scope.periodEnd = '';
     } else if (activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
       console.log('activating passing time mode');
-      $scope.inClassDIV = false;
+      $scope.inClassDiv = false;
       $scope.passingTimeDiv = true;
       $scope.classTimers = false;
       theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);

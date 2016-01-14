@@ -45,7 +45,7 @@ angular.module('havaschedule.services', [])
 		if (isDebug())
 		{
 			// console.log('getCurrentTime :: elapsed = ' + elapsed);
-			result = new Date(2016, 0, 11, 11, 29, 45);
+			result = new Date(2016, 0, 11, 11, 29, 50);
 			result = new Date(result.getTime() + elapsed);
 		} else {
 			result = new Date();
@@ -150,11 +150,10 @@ angular.module('havaschedule.services', [])
 		{status:  'some status message', period: the array representing the appropriate period}
 */
 	var calcBell = function(bellschedule) {
-		var currentDateTime = dataServices.getCurrentTime();
+		var timeNow = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
 		var periods = bellschedule[1].periods;
 		var foundPeriod = {status: 'not during school hours', period: null};
-		var timeNow = dataServices.getCurrentTime();
 		var timeNowString = dateFilter(timeNow, "HH:mm:ss");
 		var passingTime = false;
 		var duringSchool = false;
