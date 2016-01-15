@@ -49,9 +49,9 @@ function($interval, dateFilter, timeCalcServices, dataServices, $timeout) {
 
 }])
 
-.directive('theCurrentTime', ['$interval', 'dateFilter', 'dataServices',
+.directive('theCurrentTime', ['$interval', 'dateFilter', 'dataServices', 'timeCalcServices',
 
-function($interval, dateFilter, dataServices) {
+function($interval, dateFilter, dataServices, timeCalcServices) {
   // return the directive link function. (compile function not needed)
   return function(scope, element, attrs) {
     var format;  // date format string
@@ -62,7 +62,7 @@ function($interval, dateFilter, dataServices) {
     // don't know if we will get this call at the very second it's due...
     function findTimeInArray(element, index, array) {
         var d = dataServices.getCurrentTime();
-        console.log('findTimeInArray comparing');
+        // console.log('findTimeInArray comparing ' + d + ' and ' + element);
         if (d.getHours() == element.getHours() && d.getMinutes() == element.getMinutes()) {
           return true;
         }
@@ -74,11 +74,12 @@ function($interval, dateFilter, dataServices) {
       var d = dataServices.getCurrentTime();
       // run the findTimeInArray method against all elements of theCurrentTime
       // time notification list...  see if an update is required to the UI.
-      var matchingTimes = dataServices.getTimeNotificationList().find(findTimeInArray);
-      console.log('updateTime() in directive theCurrentTime --> matchingTimes:  ' + matchingTimes);
-      if (matchingTimes !== undefined) {
-        scope.updateDateUI();
-        scope.updatePeriodUI();
+      if (d.getSeconds() === 0) {
+        var matchingTimes = timeCalcServices.getTimeNotificationList().find(findTimeInArray);
+        if (matchingTimes !== undefined) {
+          scope.updateDateUI();
+          scope.updatePeriodUI();
+        }
       }
       element.text(dateFilter(d, "HH:mm:ss"));
     }

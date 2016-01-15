@@ -18,19 +18,6 @@ angular.module('havaschedule.services', [])
 		return bellschedule;
 	};
 
-	var getTimeNotificationList = function() {
-		var bells = getBellSchedules();
-		var times = [];
-		for (var periodID in bells.periods) {
-			var period = bells.periods[periodID];
-			var startTime = timeCalcServices.getTimeFromString(period.start);
-			times.push(startTime);
-			var endTime = new Date(startTime.getTime() + period.duration * 60000);
-			times.push(endTime);
-		}
-		return times;
-	};
-
 	var getRoster = function() {
 		var roster = [
 			{period: 0, name: 'Advisory 205', room: '220'},
@@ -67,7 +54,6 @@ angular.module('havaschedule.services', [])
 		getBellSchedules: getBellSchedules,
 		getRoster: getRoster,
 		getCurrentTime: getCurrentTime,
-		getTimeNotificationList: getTimeNotificationList,
 		isDebug: isDebug
 	};
 })
@@ -99,6 +85,20 @@ angular.module('havaschedule.services', [])
 
 .factory('timeCalcServices', function(dataServices, dateFilter) {
 	// see:  http://tools.ietf.org/html/rfc2822#section-3.3 for date-time parse format; I give up for now...
+
+	var getTimeNotificationList = function() {
+		var bells = dataServices.getBellSchedules();
+		var times = [];
+		for (var periodID in bells[1].periods) {
+			var period = bells[1].periods[periodID];
+			var startTime = getTimeFromString(period.start);
+			times.push(startTime);
+			var endTime = new Date(startTime.getTime() + period.duration * 60000);
+			times.push(endTime);
+		}
+		return times;
+	};
+
 	/*
 		returns TRUE if t1 < t2, where t1 and t2 are specified
 		as strings in the form HH:mm:ss
@@ -229,6 +229,7 @@ angular.module('havaschedule.services', [])
 	};
 
 	return {
+		getTimeNotificationList: getTimeNotificationList,
 		isBefore: isBefore,
 		isEqual: isEqual,
 		addToTimeString: addToTimeString,
