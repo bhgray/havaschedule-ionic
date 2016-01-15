@@ -23,6 +23,10 @@ angular.module('havaschedule', [
   });
 
   $rootScope.appStartTime = new Date();
+  $rootScope.debug = false;
+  $rootScope.debugStatusChange = false;
+  $rootScope.debugTime = '2016-01-16-08-05-00';
+  $rootScope.devModeEnabled = true;
   console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
 
 })
