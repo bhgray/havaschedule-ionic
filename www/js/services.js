@@ -33,8 +33,20 @@ angular.module('havaschedule.services', [])
 		return roster;
 	};
 
+	var setDebug = function(debug) {
+			$rootScope.debug = debug;
+	};
+
 	var isDebug = function() {
-		return true;
+		return $rootScope.debug;
+	};
+
+	var setDebugTime = function(time) {
+			$rootScope.debugTime = time;
+	};
+
+	var getDebugTime = function() {
+		return $rootScope.debugTime;
 	};
 
 	var getCurrentTime = function() {
@@ -42,7 +54,17 @@ angular.module('havaschedule.services', [])
 		var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
 		if (isDebug())
 		{
-			result = new Date(2016, 0, 11, 11, 29, 50);
+			var debugTime = getDebugTime();
+			// console.log('debug mode:  time = ' + debugTime);
+				debugTime = debugTime.split('-');
+				// console.log('split = ' + debugTime);
+			var year = debugTime[0];
+			var month = debugTime[1] - 1;	// january = 0; user will use normal dates though
+			var day = debugTime[2];
+			var hour = debugTime[3];
+			var minute = debugTime[4];
+			var second = debugTime[5];
+			result = new Date(year, month, day, hour, minute, second);
 			result = new Date(result.getTime() + elapsed);
 		} else {
 			result = new Date();
@@ -54,7 +76,10 @@ angular.module('havaschedule.services', [])
 		getBellSchedules: getBellSchedules,
 		getRoster: getRoster,
 		getCurrentTime: getCurrentTime,
-		isDebug: isDebug
+		isDebug: isDebug,
+		setDebug: setDebug,
+		getDebugTime: getDebugTime,
+		setDebugTime: setDebugTime
 	};
 })
 

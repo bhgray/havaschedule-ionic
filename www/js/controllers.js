@@ -4,7 +4,7 @@ angular.module('havaschedule.controllers', [])
 .constant('NOT_SCHOOL_HOURS', '-1')
 
 .controller('AppCtrl',
-function($scope, $ionicModal, $timeout, dataServices) {
+function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -13,6 +13,10 @@ function($scope, $ionicModal, $timeout, dataServices) {
   // $scope.$on('$ionicView.enter', function(e) {
   //   // console.log('$ionicView.enter triggered (see app.js)');
   // });
+
+  // ******************************************************************************
+  //  login
+  // ******************************************************************************
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -44,7 +48,53 @@ function($scope, $ionicModal, $timeout, dataServices) {
       $scope.closeLogin();
     }, 1000);
   };
-})
+
+// ******************************************************************************
+//  debug
+// ******************************************************************************
+
+// Form data for the debug modal
+  $scope.debugData = {
+    timeData: dataServices.getDebugTime(),
+    debugEnabled: dataServices.isDebug()
+  };
+
+  $ionicModal.fromTemplateUrl('templates/debug.html', {
+    scope:$scope
+  }).then(function(modal) {
+    $scope.debugmodal = modal;
+  });
+
+  // Triggered in the debug modal to close it
+  $scope.closeDebug = function() {
+    $scope.debugmodal.hide();
+  };
+
+  // Open the login modal
+  $scope.debug = function() {
+    $scope.debugmodal.show();
+  };
+
+  // Perform the debug toggle action when the user submits the debug form
+  $scope.doDebug = function() {
+    // console.log('Doing debug', $scope.debugData);
+    $rootScope.debugStatusChange = true;
+    // incrementing the app system time in debug mode uses
+    // the delta from appStartTime, so we need to reset this...
+    if ($scope.debugData.debugEnabled) {
+      $rootScope.appStartTime = new Date();
+      console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+      dataServices.setDebugTime($scope.debugData.timeData);
+    }
+    dataServices.setDebug($scope.debugData.debugEnabled);
+    $scope.closeDebug();
+  };
+
+  //  var set in app.js
+  $scope.devModeEnabled = $rootScope.devModeEnabled;
+
+
+})  // end of appCtrl
 
 .controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
   // dumb programmer note:  the dependencies above ONLY need to get injected into the
@@ -52,15 +102,21 @@ function($scope, $ionicModal, $timeout, dataServices) {
   // inner function w/out further injection.  Neat!
 function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
 
+  // ******************************************************************************
+  //  handle background and resultTime
+  //  see:  https://cordova.apache.org/docs/en/latest/cordova/events/events.resume.html
+  // ******************************************************************************
+
+  $scope.$on('$ionicView.enter', function() {
+      $scope.updateDateUI();
+      $scope.updatePeriodUI();
+  });
+
+  // this only happens when it's instantiated....
   $scope.currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
-  // $scope.$watch('currentDateTimeWithDebug', function(newValue, oldValue) {
-  //   console.log('watch called with ' + newValue);
-  //   $scope.updateDateUI();
-  //   $scope.updatePeriodUI();
-  // });
 
   $scope.updateDateUI = function() {
-    console.log('updateDateUI');
+    // console.log('updateDateUI');
     $scope.theDate = dateTimeServices.dateString($scope.currentDateTimeWithDebug);
     $scope.theWeekday = dateTimeServices.dayOfWeekString($scope.currentDateTimeWithDebug);
   };
@@ -76,7 +132,7 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     var roster = dataServices.getRoster();
     var activePeriod = timeCalcServices.calcBell(bellschedule);
     var theRosteredClass;
-    console.log('updatePeriodUI found:  ' + activePeriod.status + (activePeriod.name === null?'':' ' + activePeriod.period.name));
+    // console.log('updatePeriodUI found:  ' + activePeriod.status);
 
     if (activePeriod.status == 'not during school hours') {        // not during school hours
       console.log('activating non school hours mode');
@@ -113,7 +169,7 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     }
   };
 
-  $scope.updateDateUI();
-  $scope.updatePeriodUI();
+  // $scope.updateDateUI();
+  // $scope.updatePeriodUI();
 
 }]);

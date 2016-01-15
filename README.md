@@ -31,4 +31,17 @@
       - ?? how to create a singleton -- don't want to recreate the times notification array every second!
       - TODO: don't love this in the directive.  Seems more appropriate for the service to watch the time, then broadcast UI updates from there.... future refactoring?
       - TODO:  consider using moment.js in future refactoring?
-      - STATUS:  findTimeInArray in directives.js doesn't work... 
+      - STATUS:  findTimeInArray in directives.js doesn't work...
+      -
+## 2016-01-14-1927
+  * branch time_notifications_refactor done!  
+  * ISSUE: the timers are still *slighly* off...
+  * new branch debug_toggle
+    - goal:  allow setting the debug time and toggle in the UI.
+
+## 2016-01-15-0619
+  * BUG:  date doesn't refresh when app re-entered next day!
+    - FIXED:  added $ionicView.$on function to refresh the UI
+    - see:  http://www.gajotres.net/understanding-ionic-view-lifecycle/
+  * TODO:  check full data lifecycle....  
+  * STATUS:  done.  

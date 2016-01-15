@@ -1,0 +1,26 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Debug Options</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeDebug()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="doDebug()">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Enter Time and Date</span>
+          <input type="text" ng-model="debugData.timeData">
+        </label>
+        <label class="item">Use format:  yyyy-mm-dd-hh-mm-ss</label>
+        <label class="item item-input">
+          <span class="input-label">Enable Debug</span><br>
+          <ion-checkbox ng-checked="debugData.debugEnabled" ng-model="debugData.debugEnabled">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Submit</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
