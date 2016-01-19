@@ -128,9 +128,10 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     Element 2:  an array of periods
     */
 
-    var bellschedule = dataServices.getBellSchedules();
+    // var bellschedule = dataServices.getBellSchedules();
+    var bellschedule = timeCalcServices.getBellScheduleWithDates();
     var roster = dataServices.getRoster();
-    var activePeriod = timeCalcServices.calcBell(bellschedule);
+    var activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
     var theRosteredClass;
     // console.log('updatePeriodUI found:  ' + activePeriod.status);
 
@@ -151,7 +152,7 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
       theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
       $scope.thePeriod = activePeriod.period.name;
-      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartDateTimeString = dateFilter(activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
       $scope.periodStartString = activePeriod.period.start;
       $scope.periodEnd = '';
     } else {
@@ -162,10 +163,13 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
       $scope.thePeriod = activePeriod.period.name;
       theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
-      $scope.periodStartDateTimeString = dateFilter(timeCalcServices.getTimeFromString(activePeriod.period.start), "MMM dd, yyyy HH:mm:ss");
-      $scope.periodStartString = activePeriod.period.start;
-      $scope.periodEndString = timeCalcServices.addToTimeString(activePeriod.period.start, activePeriod.period.duration);
-      $scope.periodEndDateTimeString = dateFilter(timeCalcServices.getTimeFromString($scope.periodEndString), "MMM dd, yyyy HH:mm:ss");
+      // used in display.html directly
+      $scope.periodStartString = dateFilter(activePeriod.period.start, "HH:mm:ss");
+      $scope.periodEndString = dateFilter(activePeriod.period.end, "HH:mm:ss");
+
+      // used in display.html to initialize the counttimer elements (see directives.js)
+      $scope.periodStartDateTimeString = dateFilter(activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
+      $scope.periodEndDateTimeString = dateFilter(activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
     }
   };
 

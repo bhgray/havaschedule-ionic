@@ -1,18 +1,24 @@
 angular.module('havaschedule.services', [])
 
 .factory('dataServices', function($rootScope) {
+
+/*
+			bell schedules store times as HH:mm:ss strings with durations.
+			when they are opened in the app, they are converted to Date() objects
+*/
+
 		var getBellSchedules = function() {
 			var bellschedule = [{name: 'Regular'},
 			{periods: [
-				{period: 0, name: 'Advisory', start: '07:50:00', duration: 16},
-				{period: 1, name: 'Period 1', start: '08:09:00', duration: 48},
-				{period: 2, name: 'Period 2', start: '09:00:00', duration: 48},
-				{period: 3, name: 'Period 3', start: '09:51:00', duration: 48},
-				{period: 4, name: 'Period 4', start: '10:42:00', duration: 48},
-				{period: 5, name: 'Period 5', start: '11:33:00', duration: 48},
-				{period: 6, name: 'Period 6', start: '12:24:00', duration: 48},
-				{period: 7, name: 'Period 7', start: '13:15:00', duration: 48},
-				{period: 8, name: 'Period 8', start: '14:06:00', duration: 48}
+				{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 16},
+				{period: 1, name: 'Period 1', start: '08:09:00', end: '', duration: 48},
+				{period: 2, name: 'Period 2', start: '09:00:00', end: '', duration: 48},
+				{period: 3, name: 'Period 3', start: '09:51:00', end: '', duration: 48},
+				{period: 4, name: 'Period 4', start: '10:42:00', end: '', duration: 48},
+				{period: 5, name: 'Period 5', start: '11:33:00', end: '', duration: 48},
+				{period: 6, name: 'Period 6', start: '12:24:00', end: '', duration: 48},
+				{period: 7, name: 'Period 7', start: '13:15:00', end: '', duration: 48},
+				{period: 8, name: 'Period 8', start: '14:06:00', end: '', duration: 48}
 			]}
 		];
 		return bellschedule;
@@ -109,7 +115,18 @@ angular.module('havaschedule.services', [])
 })
 
 .factory('timeCalcServices', function(dataServices, dateFilter) {
-	// see:  http://tools.ietf.org/html/rfc2822#section-3.3 for date-time parse format; I give up for now...
+
+	var getBellScheduleWithDates = function() {
+		var bellschedule = dataServices.getBellSchedules();
+		var periodList = bellschedule[1].periods;
+		for (var periodID in periodList) {
+			var p = periodList[periodID];
+			var endTimeString = addToTimeString(p.start, p.duration);
+			p.start = getTimeFromString(p.start);
+			p.end = getTimeFromString(endTimeString);
+		}
+		return bellschedule;
+	};
 
 	var getTimeNotificationList = function() {
 		var bells = dataServices.getBellSchedules();
@@ -124,29 +141,17 @@ angular.module('havaschedule.services', [])
 		return times;
 	};
 
+
 	/*
 		returns TRUE if t1 < t2, where t1 and t2 are specified
 		as strings in the form HH:mm:ss
 	*/
-	var isBefore = function(t1String, t2String) {
-		var t1Date = getTimeFromString(t1String);
-		var t2Date = getTimeFromString(t2String);
-		if (t1Date.getTime() < t2Date.getTime()) {
-			return true;
-		} else {
-			return false;
-		}
+	var isBeforeDates = function(d1, d2) {
+		return d1.getTime() < d2.getTime();
 	};
 
-	var isEqual = function(t1String, t2String) {
-		// console.log('isEqual(' + t1String + ',' + t2String + ')');
-		var t1Date = getTimeFromString(t1String);
-		var t2Date = getTimeFromString(t2String);
-		if (t1Date.getTime() === t2Date.getTime()) {
-			return true;
-		} else {
-			return false;
-		}
+	var isEqualDates = function(d1, d2) {
+		return d1.getTime() === d2.getTime();
 	};
 
 /*
@@ -166,15 +171,20 @@ angular.module('havaschedule.services', [])
 /*
 		adds a number of minutes to a time,
 		specified as a HH:mm string.
+
+		returnDate = TRUE returns a Date() object,
+		otherwise return a string in HH:mm:ss format.
 */
-	var addToTimeString = function(timeString, minutes) {
+	var addToTimeString = function(timeString, minutes, returnDate) {
 		// console.log('addToTimeString(' + timeString + ', ' + minutes + ')');
 		var theTime = getTimeFromString(timeString);
 		var resultTime = new Date(theTime.getTime() + minutes * 60000);
 		// console.log('addToTimeString result ->' + resultTime);
-		var result = dateFilter(resultTime, "HH:mm:ss");
-		// console.log('addToTimeString returning ' + result);
-		return result;
+		if (returnDate) {
+			return resultTime;
+		} else {
+			return dateFilter(resultTime, "HH:mm:ss");
+		}
 	};
 
 /*
@@ -185,32 +195,32 @@ angular.module('havaschedule.services', [])
 		Returns an object consisting of
 		{status:  'some status message', period: the array representing the appropriate period}
 */
-	var calcBell = function(bellschedule) {
+		var calcBellUsingDates = function(bellschedule) {
 		var timeNow = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
 		var periods = bellschedule[1].periods;
 		var foundPeriod = {status: 'not during school hours', period: null};
-		var timeNowString = dateFilter(timeNow, "HH:mm:ss");
+		// var timeNowString = dateFilter(timeNow, "HH:mm:ss");
 		var passingTime = false;
 		var duringSchool = false;
 		// console.log("calcBell:  current time = " + timeNowString);
 		for (var periodID = 0; periodID < periods.length; periodID++) {
-			var periodStart = periods[periodID].start;
-			var periodDuration = periods[periodID].duration;
-			var periodEnd = addToTimeString(periodStart, periodDuration);
+			var p = periods[periodID];
+			var periodStart = p.start;
+			var periodEnd = p.end;
 			// console.log('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
 			if (periodID < periods.length - 1) {
 				var nextID = periodID + 1;
-				var nextPeriodStart = periods[periodID + 1].start;
+				var nextPeriodStart = periods[nextID].start;
 				// console.log(nextPeriodStart);
-				passingTime = isBefore(periodEnd, timeNowString) && isBefore(timeNowString, nextPeriodStart);
-				if (passingTime || isEqual(timeNowString, periodEnd)) {
+				passingTime = isBeforeDates(periodEnd, timeNow) && isBeforeDates(timeNow, nextPeriodStart);
+				if (passingTime || isEqualDates(timeNow, periodEnd)) {
 					foundPeriod = {status: 'passing time', period: periods[periodID + 1]};	// passing time!
 				}
 			}
 			if (!passingTime) {
-				duringSchool = isBefore(periodStart, timeNowString) && isBefore(timeNowString, periodEnd);
-				if (duringSchool  || isEqual(timeNowString, periodStart)) {
+				duringSchool = isBeforeDates(periodStart, timeNow) && isBeforeDates(timeNow, periodEnd);
+				if (duringSchool  || isEqualDates(timeNow, periodStart)) {
 						foundPeriod = {status: 'during school', period: periods[periodID]};
 				}
 			}
@@ -255,10 +265,9 @@ angular.module('havaschedule.services', [])
 
 	return {
 		getTimeNotificationList: getTimeNotificationList,
-		isBefore: isBefore,
-		isEqual: isEqual,
 		addToTimeString: addToTimeString,
-		calcBell: calcBell,
+		getBellScheduleWithDates: getBellScheduleWithDates,
+		calcBellUsingDates: calcBellUsingDates,
 		getTimeFromString: getTimeFromString,
 		getRosteredClass: getRosteredClass,
 		countdownFormatString: countdownFormatString

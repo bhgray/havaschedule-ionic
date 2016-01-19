@@ -45,3 +45,13 @@
     - see:  http://www.gajotres.net/understanding-ionic-view-lifecycle/
   * TODO:  check full data lifecycle....  
   * STATUS:  done.  
+
+## 2016-01-17-0919
+  * GRRRRR my stupidity on git erased some of this README and other work I had done
+    on services and display to toggle the pressed state on the timers.  GRRRRR
+  * created branch time_calc_refactor
+
+  * check out:  https://www.airpair.com/angularjs/posts/top-10-mistakes-angularjs-developers-make
+
+## 2016-01-19-1157
+  * DONE time calc refactoring.  
