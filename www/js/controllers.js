@@ -96,7 +96,7 @@ function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
 
 })  // end of appCtrl
 
-.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter',
+.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification',
   // dumb programmer note:  the dependencies above ONLY need to get injected into the
   // controller function ONCE (below).  They are available as scoped variables to every
   // inner function w/out further injection.  Neat!
@@ -173,7 +173,31 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     }
   };
 
-  // $scope.updateDateUI();
-  // $scope.updatePeriodUI();
+    $scope.setTimer = function(amt, el, isActive) {
+      console.log('settimer for ' + amt);
+      var periodEnd, timerEnd, nowTime;
+      var scopeDataName = el + 'End';
+      console.log('scopeDataName = ' + scopeDataName);
+      if (amt < 0) {
+        periodEnd = timeCalcServices.getTimeFromString($scope.periodEndString);
+        timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + amt);
+      } else {
+        nowTime = dataServices.getCurrentTime();
+        timerEnd = nowTime.setMinutes(nowTime.getMinutes() + amt);
+      }
+      if (el === 'timer1') {
+        $scope.timer1End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      } else if (el === 'timer2') {
+        $scope.timer2End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      } else if (el === 'timer3') {
+        $scope.timer3End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      } else if (el === 'timer4') {
+        $scope.timer4End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      } else if (el === 'timer5') {
+        $scope.timer5End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      } else if (el === 'timer6') {
+        $scope.timer6End = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      }
+    };
 
 }]);

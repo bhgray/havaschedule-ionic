@@ -54,4 +54,19 @@
   * check out:  https://www.airpair.com/angularjs/posts/top-10-mistakes-angularjs-developers-make
 
 ## 2016-01-19-1157
-  * DONE time calc refactoring.  
+  * DONE time calc refactoring.  committed, pulled, and deleted.
+  * CREATE:  new branch timers
+  * Note.  Scope of variables used in ng directives seems to be scope?
+  * one issue:  briefly shows NANANA before the scope updates.....
+  - solution might be to update ng-show directive in the function call once the data is created rather than immediately
+  * TODO:
+    - style the lists
+    - have alarms ring when done?
+    - add a callback to the counttimer directive?  
+  * added ng-cordova (bower install ngCordova)
+    - this is an angular wrapper for cordova....
+  * added ng-cordova.min.js to index.html
+  * installed plugin for notifications
+    - see:  https://devdactic.com/local-notifications-ionic/
+    - cordova plugin add de.appplant.cordova.plugin.local-notification
+    - note:  only installed android b/c i'm working in windows....

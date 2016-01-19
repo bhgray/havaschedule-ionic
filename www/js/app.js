@@ -4,7 +4,8 @@ angular.module('havaschedule', [
   'ionic.service.core',
   'havaschedule.controllers',
   'havaschedule.services',
-  'havaschedule.directives'
+  'havaschedule.directives',
+  'ngCordova'
 ])
 
 .run(function($ionicPlatform, $rootScope, dateFilter) {

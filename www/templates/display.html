@@ -35,21 +35,29 @@
       <div class="item item-divider dark">
         Timers
       </div>
-      <a href="#" class="item item-icon-left">
+      <a href="#" class="item item-icon-left" id="timer1" ng-show="classTimers" ng-click="setTimer(15, 'timer1', toggle1); toggle1 = !toggle1" ng-init="toggle1=false" ng-class="{'active':toggle1}">
         <i class="icon ion-android-alarm-clock"></i>
-        Every 10 minutes
+        15 minutes <countTimer ng-show="toggle1" date="{{timer1End}}">&nbsp;</counttimer>
       </a>
-      <a href="#" class="item item-icon-left" ng-show="classTimers">
+      <a href="#" class="item item-icon-left"  id="timer2" ng-show="classTimers" ng-click="setTimer(10, 'timer2', toggle2); toggle2 = !toggle2" ng-init="toggle2=false" ng-class="{'active':toggle2}">
         <i class="icon ion-android-alarm-clock"></i>
-        10 before end
+        10 minutes <countTimer ng-show="toggle2" date="{{timer2End}}">&nbsp;</counttimer>
       </a>
-      <a href="#" class="item item-icon-left" ng-show="classTimers">
+      <a href="#" class="item item-icon-left"  id="timer3" ng-show="classTimers" ng-click="setTimer(1, 'timer3', toggle3); toggle3 = !toggle3" ng-init="toggle3=false" ng-class="{'active':toggle3}">
         <i class="icon ion-android-alarm-clock"></i>
-        5 before end
+        1 minute <countTimer ng-show="toggle3" date="{{timer3End}}">&nbsp;</counttimer>
       </a>
-      <a href="#" class="item item-icon-left" ng-show="classTimers">
+      <a href="#" class="item item-icon-left"  id="timer4" ng-show="classTimers" ng-click="setTimer(-10, 'timer4', toggle4); toggle4 = !toggle4" ng-init="toggle4=false" ng-class="{'active':toggle4}">
         <i class="icon ion-android-alarm-clock"></i>
-        1 before end
+        10 before end <countTimer ng-show="toggle4" date="{{timer4End}}">&nbsp;</counttimer>
+      </a>
+      <a href="#" class="item item-icon-left" id="timer5" ng-show="classTimers" ng-click="setTimer(-5, 'timer5', toggle5); toggle5 = !toggle5" ng-init="toggle5=false" ng-class="{'active':toggle5}">
+        <i class="icon ion-android-alarm-clock"></i>
+        5 before end <countTimer ng-show="toggle5" date="{{timer5End}}">&nbsp;</counttimer>
+      </a>
+      <a href="#" class="item item-icon-left" id="timer6" ng-show="classTimers" ng-click="setTimer(-2, 'timer6', toggle6); toggle6 = !toggle6" ng-init="toggle6=false" ng-class="{'active':toggle6}">
+        <i class="icon ion-android-alarm-clock"></i>
+        2 before end <countTimer ng-show="toggle6" date="{{timer6End}}">&nbsp;</counttimer>
       </a>
     </div>
 
