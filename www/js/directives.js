@@ -16,11 +16,12 @@ function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootS
     }
 
     function updateTime() {
-      if ($rootScope.debugStatusChange === true) {
+      if ($rootScope.debugStatusChange === true || $rootScope.bellScheduleStatusChange) {
         // console.log('debugStatusChange detected in counttimer directive');
         scope.updateDateUI();
         scope.updatePeriodUI();
         $rootScope.debugStatusChange = false;
+        $rootScope.bellScheduleStatusChange = false;
       }
 
       // console.log('attrs -> ' + attrs.date);

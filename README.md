@@ -70,3 +70,9 @@
     - see:  https://devdactic.com/local-notifications-ionic/
     - cordova plugin add de.appplant.cordova.plugin.local-notification
     - note:  only installed android b/c i'm working in windows....
+  * created a new branch timer_notifications
+## 2016-01-20-0949
+  * created new branch off of timers:  choose_bellschedule
+    - added new bellschedules and refined data structure in services.js to return the bell schedules.
+    - DONE
+    - TODO:  style the spans in display.html, and why doesn't it load immediately?  takes two pushes

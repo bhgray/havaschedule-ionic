@@ -49,6 +49,37 @@ function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
     }, 1000);
   };
 
+  // ******************************************************************************
+  //  choose bellschedule
+  // ******************************************************************************
+
+  $ionicModal.fromTemplateUrl('templates/choosebell.html', {
+    scope:$scope
+  }).then(function(modal) {
+    $scope.chooseBellModal = modal;
+  });
+
+  // Triggered in the debug modal to close it
+  $scope.closeBellChooser = function() {
+    $scope.chooseBellModal.hide();
+  };
+
+  $scope.changeBellSelection = function(selection) {
+      $rootScope.chosenBellScheduleName = $scope.items[selection];
+      $rootScope.bellScheduleStatusChange = true;
+      $scope.closeBellChooser();
+  };
+
+  // Open the login modal
+  $scope.showBell = function() {
+    $scope.items = [];
+    var bells = dataServices.getBellSchedules('all');
+    for (var bellID in bells) {
+      $scope.items.push(bells[bellID].name);
+    }
+    $scope.chooseBellModal.show();
+  };
+
 // ******************************************************************************
 //  debug
 // ******************************************************************************
@@ -96,11 +127,11 @@ function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
 
 })  // end of appCtrl
 
-.controller('DisplayCtrl', ['$scope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification',
+.controller('DisplayCtrl', ['$scope', '$rootScope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification',
   // dumb programmer note:  the dependencies above ONLY need to get injected into the
   // controller function ONCE (below).  They are available as scoped variables to every
   // inner function w/out further injection.  Neat!
-function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
+function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
 
   // ******************************************************************************
   //  handle background and resultTime
@@ -129,10 +160,11 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
     */
 
     // var bellschedule = dataServices.getBellSchedules();
-    var bellschedule = timeCalcServices.getBellScheduleWithDates();
+    var bellschedule = timeCalcServices.getBellScheduleWithDates($rootScope.chosenBellScheduleName);
     var roster = dataServices.getRoster();
     var activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
     var theRosteredClass;
+    $scope.chosenBellScheduleName = $rootScope.chosenBellScheduleName;
     // console.log('updatePeriodUI found:  ' + activePeriod.status);
 
     if (activePeriod.status == 'not during school hours') {        // not during school hours
@@ -164,8 +196,8 @@ function($scope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
       theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
       // used in display.html directly
-      $scope.periodStartString = dateFilter(activePeriod.period.start, "HH:mm:ss");
-      $scope.periodEndString = dateFilter(activePeriod.period.end, "HH:mm:ss");
+      $scope.periodStartString = dateFilter(activePeriod.period.start, "HH:mm");
+      $scope.periodEndString = dateFilter(activePeriod.period.end, "HH:mm");
 
       // used in display.html to initialize the counttimer elements (see directives.js)
       $scope.periodStartDateTimeString = dateFilter(activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");

@@ -1,0 +1,15 @@
+<ion-view view-title="HavaSchedule">
+  <ion-header-bar>
+    <h1 class="title">Choose a Bell Schedule</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeBellChooser()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list>
+        <ion-item ng-repeat="item in items track by $index" ng-click="changeBellSelection($index)">
+          <p>{{item}}</p>
+        </ion-item>
+       </ion-list>
+  </ion-content>
+</ion-view>

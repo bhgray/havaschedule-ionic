@@ -7,22 +7,71 @@ angular.module('havaschedule.services', [])
 			when they are opened in the app, they are converted to Date() objects
 */
 
-		var getBellSchedules = function() {
-			var bellschedule = [{name: 'Regular'},
-			{periods: [
-				{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 16},
-				{period: 1, name: 'Period 1', start: '08:09:00', end: '', duration: 48},
-				{period: 2, name: 'Period 2', start: '09:00:00', end: '', duration: 48},
-				{period: 3, name: 'Period 3', start: '09:51:00', end: '', duration: 48},
-				{period: 4, name: 'Period 4', start: '10:42:00', end: '', duration: 48},
-				{period: 5, name: 'Period 5', start: '11:33:00', end: '', duration: 48},
-				{period: 6, name: 'Period 6', start: '12:24:00', end: '', duration: 48},
-				{period: 7, name: 'Period 7', start: '13:15:00', end: '', duration: 48},
-				{period: 8, name: 'Period 8', start: '14:06:00', end: '', duration: 48}
-			]}
+		var getBellSchedules = function(which) {
+			var bellschedules = [
+				{name: 'Regular',
+					periods: [
+						{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 16},
+						{period: 1, name: 'Period 1', start: '08:09:00', end: '', duration: 48},
+						{period: 2, name: 'Period 2', start: '09:00:00', end: '', duration: 48},
+						{period: 3, name: 'Period 3', start: '09:51:00', end: '', duration: 48},
+						{period: 4, name: 'Period 4', start: '10:42:00', end: '', duration: 48},
+						{period: 5, name: 'Period 5', start: '11:33:00', end: '', duration: 48},
+						{period: 6, name: 'Period 6', start: '12:24:00', end: '', duration: 48},
+						{period: 7, name: 'Period 7', start: '13:15:00', end: '', duration: 48},
+						{period: 8, name: 'Period 8', start: '14:06:00', end: '', duration: 48}
+					]},
+				{name: 'Extended Advisory',
+					periods: [
+						{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 40},
+						{period: 1, name: 'Period 1', start: '08:33:00', end: '', duration: 45},
+						{period: 2, name: 'Period 2', start: '09:21:00', end: '', duration: 45},
+						{period: 3, name: 'Period 3', start: '10:09:00', end: '', duration: 45},
+						{period: 4, name: 'Period 4', start: '10:57:00', end: '', duration: 45},
+						{period: 5, name: 'Period 5', start: '11:45:00', end: '', duration: 45},
+						{period: 6, name: 'Period 6', start: '12:33:00', end: '', duration: 45},
+						{period: 7, name: 'Period 7', start: '13:21:00', end: '', duration: 45},
+						{period: 8, name: 'Period 8', start: '14:09:00', end: '', duration: 45}
+					]},
+					{name: 'Early Dissmisal',
+						periods: [
+							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 16},
+							{period: 1, name: 'Period 1', start: '08:09:00', end: '', duration: 21},
+							{period: 2, name: 'Period 2', start: '08:33:00', end: '', duration: 21},
+							{period: 3, name: 'Period 3', start: '08:57:00', end: '', duration: 30},
+							{period: 4, name: 'Period 4', start: '09:30:00', end: '', duration: 30},
+							{period: 5, name: 'Period 5', start: '10:03:00', end: '', duration: 30},
+							{period: 6, name: 'Period 6', start: '10:36:00', end: '', duration: 30},
+							{period: 7, name: 'Period 7', start: '11:09:00', end: '', duration: 21},
+							{period: 8, name: 'Period 8', start: '11:33:00', end: '', duration: 21}
+						]},
+					{name: 'Second Advisory',
+						periods: [
+							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 16},
+							{period: 1, name: 'Period 1', start: '08:09:00', end: '', duration: 47},
+							{period: 2, name: 'Period 2', start: '08:59:00', end: '', duration: 47},
+							{period: 3, name: 'Period 3', start: '09:49:00', end: '', duration: 47},
+							{period: 4, name: 'Period 4', start: '10:39:00', end: '', duration: 47},
+							{period: 5, name: 'Period 5', start: '11:29:00', end: '', duration: 47},
+							{period: 6, name: 'Period 6', start: '12:19:00', end: '', duration: 47},
+							{period: 7, name: 'Period 7', start: '13:09:00', end: '', duration: 47},
+							{period: 8, name: 'Period 8', start: '13:59:00', end: '', duration: 47}
+						]}
 		];
-		return bellschedule;
-	};
+		if (which === 'all') {
+			return bellschedules;
+		} else {
+			var foundBellSchedule = null;
+			for (var bellID in bellschedules) {
+				var bell = bellschedules[bellID];
+				if (bell.name === which) {
+					foundBellSchedule = bell;
+				}
+			}
+		return foundBellSchedule;
+	}
+};
+
 
 	var getRoster = function() {
 		var roster = [
@@ -116,9 +165,10 @@ angular.module('havaschedule.services', [])
 
 .factory('timeCalcServices', function(dataServices, dateFilter) {
 
-	var getBellScheduleWithDates = function() {
-		var bellschedule = dataServices.getBellSchedules();
-		var periodList = bellschedule[1].periods;
+	var getBellScheduleWithDates = function(which) {
+		var bellschedule = dataServices.getBellSchedules(which);
+		// bellschedule[0]
+		var periodList = bellschedule.periods;
 		for (var periodID in periodList) {
 			var p = periodList[periodID];
 			var endTimeString = addToTimeString(p.start, p.duration);
@@ -129,10 +179,10 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getTimeNotificationList = function() {
-		var bells = dataServices.getBellSchedules();
+		var bell = dataServices.getBellSchedules('Extended Advisory');
 		var times = [];
-		for (var periodID in bells[1].periods) {
-			var period = bells[1].periods[periodID];
+		for (var periodID in bell.periods) {
+			var period = bell.periods[periodID];
 			var startTime = getTimeFromString(period.start);
 			times.push(startTime);
 			var endTime = new Date(startTime.getTime() + period.duration * 60000);
@@ -198,7 +248,7 @@ angular.module('havaschedule.services', [])
 		var calcBellUsingDates = function(bellschedule) {
 		var timeNow = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
-		var periods = bellschedule[1].periods;
+		var periods = bellschedule.periods;
 		var foundPeriod = {status: 'not during school hours', period: null};
 		// var timeNowString = dateFilter(timeNow, "HH:mm:ss");
 		var passingTime = false;
