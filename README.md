@@ -75,4 +75,10 @@
   * created new branch off of timers:  choose_bellschedule
     - added new bellschedules and refined data structure in services.js to return the bell schedules.
     - DONE
-    - TODO:  style the spans in display.html, and why doesn't it load immediately?  takes two pushes
+    - TODO:  
+      - style the spans in display.html
+      - doesn't load immediately?  takes two pushes -- FIXED
+## 2016-01-20-1808
+  * starting using mantix bug tracking....
+  * started branch off timers:  refactor_counttimer_0001 (SEE:  http://havalinasw.com/bugz/view.php?id=1)
+  * still messed up.... :-()

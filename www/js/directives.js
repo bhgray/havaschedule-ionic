@@ -15,8 +15,16 @@ function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootS
       return timeDiffString;
     }
 
+    function updateTimeNoUI() {
+      var d = dataServices.getCurrentTime();
+      var present = d.getTime();
+      var future = new Date(attrs.date).getTime();
+      var delta = timeDiff(future, present);
+      element.text(delta);
+    }
+
     function updateTime() {
-      if ($rootScope.debugStatusChange === true || $rootScope.bellScheduleStatusChange) {
+      if ($rootScope.debugStatusChange || $rootScope.bellScheduleStatusChange) {
         // console.log('debugStatusChange detected in counttimer directive');
         scope.updateDateUI();
         scope.updatePeriodUI();
@@ -70,11 +78,12 @@ function($interval, dateFilter, dataServices, timeCalcServices, $rootScope) {
       // run the findTimeInArray method against all elements of theCurrentTime
       // time notification list...  see if an update is required to the UI.
       if (d.getSeconds() === 0) {
-        var matchingTimes = timeCalcServices.getTimeNotificationList().find(findTimeInArray);
-        if (matchingTimes !== undefined || $rootScope.debugStatusChange === true) {
+        var matchingTimes = timeCalcServices.getTimeNotificationList($rootScope.chosenBellScheduleName).find(findTimeInArray);
+        if (matchingTimes !== undefined || $rootScope.debugStatusChange  || $rootScope.bellScheduleStatusChange) {
           scope.updateDateUI();
           scope.updatePeriodUI();
           $rootScope.debugStatusChange = false;
+          $rootScope.bellScheduleStatusChange = false;
         }
       }
       element.text(dateFilter(d, "HH:mm:ss"));

@@ -178,15 +178,13 @@ angular.module('havaschedule.services', [])
 		return bellschedule;
 	};
 
-	var getTimeNotificationList = function() {
-		var bell = dataServices.getBellSchedules('Extended Advisory');
+	var getTimeNotificationList = function(which) {
+		var bell = getBellScheduleWithDates(which);
 		var times = [];
 		for (var periodID in bell.periods) {
 			var period = bell.periods[periodID];
-			var startTime = getTimeFromString(period.start);
-			times.push(startTime);
-			var endTime = new Date(startTime.getTime() + period.duration * 60000);
-			times.push(endTime);
+			times.push(period.start);
+			times.push(period.end);
 		}
 		return times;
 	};

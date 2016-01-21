@@ -162,46 +162,47 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
     // var bellschedule = dataServices.getBellSchedules();
     var bellschedule = timeCalcServices.getBellScheduleWithDates($rootScope.chosenBellScheduleName);
     var roster = dataServices.getRoster();
-    var activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
+    $scope.activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
     var theRosteredClass;
     $scope.chosenBellScheduleName = $rootScope.chosenBellScheduleName;
     // console.log('updatePeriodUI found:  ' + activePeriod.status);
 
-    if (activePeriod.status == 'not during school hours') {        // not during school hours
+    if ($scope.activePeriod.status == 'not during school hours') {        // not during school hours
       console.log('activating non school hours mode');
       $scope.inClassDiv = false;
       $scope.passingTimeDiv = false;
       $scope.classTimers = false;
       $scope.theClass = '';
-      $scope.thePeriod = activePeriod.status;
+      $scope.thePeriod = $scope.activePeriod.status;
       $scope.periodStart = '';
       $scope.periodEnd = '';
-    } else if (activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
+    } else if ($scope.activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
       console.log('activating passing time mode');
       $scope.inClassDiv = false;
       $scope.passingTimeDiv = true;
       $scope.classTimers = false;
-      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
+      theRosteredClass = timeCalcServices.getRosteredClass($scope.activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
-      $scope.thePeriod = activePeriod.period.name;
-      $scope.periodStartDateTimeString = dateFilter(activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
-      $scope.periodStartString = activePeriod.period.start;
+      $scope.thePeriod = $scope.activePeriod.period.name;
+      $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartString = $scope.activePeriod.period.start;
       $scope.periodEnd = '';
     } else {
       console.log('activating during school mode');
       $scope.inClassDiv = true;
       $scope.passingTimeDiv = false;
       $scope.classTimers = true;
-      $scope.thePeriod = activePeriod.period.name;
-      theRosteredClass = timeCalcServices.getRosteredClass(activePeriod.period, roster);
+      $scope.thePeriod = $scope.activePeriod.period.name;
+      theRosteredClass = timeCalcServices.getRosteredClass($scope.activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
+      $scope.theRoom = theRosteredClass.room;
       // used in display.html directly
-      $scope.periodStartString = dateFilter(activePeriod.period.start, "HH:mm");
-      $scope.periodEndString = dateFilter(activePeriod.period.end, "HH:mm");
+      $scope.periodStartString = dateFilter($scope.activePeriod.period.start, "HH:mm");
+      $scope.periodEndString = dateFilter($scope.activePeriod.period.end, "HH:mm");
 
       // used in display.html to initialize the counttimer elements (see directives.js)
-      $scope.periodStartDateTimeString = dateFilter(activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
-      $scope.periodEndDateTimeString = dateFilter(activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
+      $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
+      $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
     }
   };
 
@@ -210,11 +211,12 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
       var periodEnd, timerEnd, nowTime;
       var scopeDataName = el + 'End';
       console.log('scopeDataName = ' + scopeDataName);
+      // var bellSchedule = dataServices.getBellSchedules($rootScope.chosenBellScheduleName);
       if (amt < 0) {
-        periodEnd = timeCalcServices.getTimeFromString($scope.periodEndString);
+        periodEnd = new Date($scope.activePeriod.period.end);
         timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + amt);
       } else {
-        nowTime = dataServices.getCurrentTime();
+        nowTime = new Date(dataServices.getCurrentTime());
         timerEnd = nowTime.setMinutes(nowTime.getMinutes() + amt);
       }
       if (el === 'timer1') {
