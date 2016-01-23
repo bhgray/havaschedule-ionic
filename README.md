@@ -81,4 +81,12 @@
 ## 2016-01-20-1808
   * starting using mantix bug tracking....
   * started branch off timers:  refactor_counttimer_0001 (SEE:  http://havalinasw.com/bugz/view.php?id=1)
-  * still messed up.... :-()
+  * still messed up.... :-(ch)
+  * FIXED:  see resolution in bugz above
+## 2016-01-22-0633
+  * back to work on timers and notifications
+  * idea is to use local notifications
+  * TODO:  refactor this readme..... this doc is supposed to be the public front of the project -- create a separate programming log
+
+## 2016-01-23-1819 THE BLIZZARD
+  * 
