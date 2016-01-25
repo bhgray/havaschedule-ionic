@@ -83,7 +83,7 @@ function($interval, dateFilter, dataServices, timeCalcServices, $rootScope) {
     // used to update the UI
     function updateTime() {
       var d = dataServices.getCurrentTime();
-      var list = null;
+      var list;
       // run the findTimeInArray method against all elements of theCurrentTime
       // time notification list...  see if an update is required to the UI.
       var updateRequired = false;
@@ -95,9 +95,9 @@ function($interval, dateFilter, dataServices, timeCalcServices, $rootScope) {
         updateRequired = true;
       }
       if (updateRequired) {
-        $rootScope.timeNotificationList = null;
+        $rootScope.timeNotificationList = undefined;
       }
-      if ($rootScope.timeNotificationList === null) {
+      if ($rootScope.timeNotificationList === undefined) {
         $rootScope.timeNotificationList = timeCalcServices.getTimeNotificationList($rootScope.chosenBellScheduleName);
       }
       list = $rootScope.timeNotificationList;

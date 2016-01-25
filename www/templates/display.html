@@ -10,7 +10,7 @@
 
     <div class="list card passingcard" ng-show="passingTimeDiv">
       <div class="item item-divider">Current Status:  Passing Time to <span class="minorstandout">{{thePeriod}}</span></div>
-      <a href="#" class="item">Your next class: <span class="standout">{{theClass}}</span> ({{theRoom}})</a>
+      <a href="#" class="item">Your next class: <span class="standout">{{theClass}}</span> in room {{theRoom}}</a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
         {{theClass}} starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
@@ -19,7 +19,7 @@
 
     <div class="list card schedulecard" ng-show="inClassDiv">
       <div class="item item-divider">{{chosenBellScheduleName}} Bell Schedule</div>
-      <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span></a>
+      <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span> in room {{theRoom}}</a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
         Started <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer> ago (at {{periodStartString}})

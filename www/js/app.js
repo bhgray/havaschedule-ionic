@@ -31,6 +31,7 @@ angular.module('havaschedule', [
   // default bell schedule....
   $rootScope.chosenBellScheduleName = "Regular";
   $rootScope.bellScheduleStatusChange = false;
+  $rootScope.timeNotificationList = undefined;
   console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
 
 })
