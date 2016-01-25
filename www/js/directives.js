@@ -24,7 +24,15 @@ function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootS
     }
 
     function updateTime() {
-      if ($rootScope.debugStatusChange || $rootScope.bellScheduleStatusChange) {
+      var updateRequired = false;
+      if ($rootScope.debugStatusChange) {
+        updateRequired = true;
+        console.log("counttimer (directive.js):  debugStatusChange");
+      } else if ($rootScope.bellScheduleStatusChange) {
+        console.log("counttimer (directive.js):  bellScheduleStatusChange");
+        updateRequired = true;
+      }
+      if (updateRequired) {
         // console.log('debugStatusChange detected in counttimer directive');
         scope.updateDateUI();
         scope.updatePeriodUI();
@@ -75,16 +83,39 @@ function($interval, dateFilter, dataServices, timeCalcServices, $rootScope) {
     // used to update the UI
     function updateTime() {
       var d = dataServices.getCurrentTime();
+      var list = null;
       // run the findTimeInArray method against all elements of theCurrentTime
       // time notification list...  see if an update is required to the UI.
+      var updateRequired = false;
+      if ($rootScope.debugStatusChange) {
+        updateRequired = true;
+        console.log("counttimer (directive.js):  debugStatusChange");
+      } else if ($rootScope.bellScheduleStatusChange) {
+        console.log("counttimer (directive.js):  bellScheduleStatusChange");
+        updateRequired = true;
+      }
+      if (updateRequired) {
+        $rootScope.timeNotificationList = null;
+      }
+      if ($rootScope.timeNotificationList === null) {
+        $rootScope.timeNotificationList = timeCalcServices.getTimeNotificationList($rootScope.chosenBellScheduleName);
+      }
+      list = $rootScope.timeNotificationList;
+      if (updateRequired) {
+        scope.updateDateUI();
+        scope.updatePeriodUI();
+        $rootScope.debugStatusChange = false;
+        $rootScope.bellScheduleStatusChange = false;
+        updateRequired = false;
+      }
+      // check once per minute if we are in a new period or passing time
       if (d.getSeconds() === 0) {
-        var matchingTimes = timeCalcServices.getTimeNotificationList($rootScope.chosenBellScheduleName).find(findTimeInArray);
-        if (matchingTimes !== undefined || $rootScope.debugStatusChange  || $rootScope.bellScheduleStatusChange) {
-          scope.updateDateUI();
-          scope.updatePeriodUI();
-          $rootScope.debugStatusChange = false;
-          $rootScope.bellScheduleStatusChange = false;
-        }
+          var matchingTimes = list.find(findTimeInArray);
+          if (matchingTimes !== undefined) {
+            console.log("counttimer (directive.js):  matchingTimes found");
+            scope.updateDateUI();
+            scope.updatePeriodUI();
+          }
       }
       element.text(dateFilter(d, "HH:mm:ss"));
     }

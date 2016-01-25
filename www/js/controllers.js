@@ -150,6 +150,7 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
     // console.log('updateDateUI');
     $scope.theDate = dateTimeServices.dateString($scope.currentDateTimeWithDebug);
     $scope.theWeekday = dateTimeServices.dayOfWeekString($scope.currentDateTimeWithDebug);
+    $scope.debug = dataServices.isDebug();
   };
 
   $scope.updatePeriodUI = function() {

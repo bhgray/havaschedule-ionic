@@ -9753,3 +9753,6 @@ a.button {
 .standout {
   font-weight: bolder;
   font-style: italic; }
+
+.debug {
+  background-color: orange; }
