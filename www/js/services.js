@@ -2,10 +2,22 @@ angular.module('havaschedule.services', [])
 
 .factory('dataServices', function($rootScope) {
 
-/*
+	var getTimers = function() {
+		var timersList = [
+			{description: "30 minutes", duration: 30, active:false, endTime:""},
+			{description: "10 minutes", duration: 10, active:false, endTime:""},
+			{description: "2 minutes", duration: 2, active:false, endTime:""},
+			{description: "10 minutes before end", duration: -10, active:false, endTime:""},
+			{description: "20 minutes before end", duration: -20, active:false, endTime:""},
+			{description: "2 minutes before end", duration: -2, active:false, endTime:""}
+		];
+		return timersList;
+	};
+
+	/*
 			bell schedules store times as HH:mm:ss strings with durations.
 			when they are opened in the app, they are converted to Date() objects
-*/
+	*/
 
 	var getBellSchedules = function(which) {
 		var bellschedules = [
@@ -83,11 +95,11 @@ angular.module('havaschedule.services', [])
 	var getRoster = function() {
 		var roster = [
 			{period: 0, name: 'Advisory 205', room: '220'},
-			{period: 1, name: 'Prep', room: 'n/a'},
-			{period: 2, name: 'Duty', room: 'n/a'},
+			{period: 1, name: 'Prep', room: ''},
+			{period: 2, name: 'Duty', room: ''},
 			{period: 3, name: 'CS1 (HS)', room: '220'},
 			{period: 4, name: 'WebDev', room: '220'},
-			{period: 5, name: 'Lunch', room: 'n/a'},
+			{period: 5, name: 'Lunch', room: ''},
 			{period: 6, name: 'CS1 (MS)', room: '220'},
 			{period: 7, name: 'APCS', room: '220'},
 			{period: 8, name: 'Discrete Math', room: '220'}
@@ -137,6 +149,7 @@ angular.module('havaschedule.services', [])
 	return {
 		getBellSchedules: getBellSchedules,
 		getRoster: getRoster,
+		getTimers: getTimers,
 		getCurrentTime: getCurrentTime,
 		isDebug: isDebug,
 		setDebug: setDebug,
@@ -209,10 +222,10 @@ angular.module('havaschedule.services', [])
 		return d1.getTime() === d2.getTime();
 	};
 
-/*
-		converts a string in the form HH:mm to a
-		javascript Date() object
-*/
+	/*
+			converts a string in the form HH:mm to a
+			javascript Date() object
+	*/
 	var getTimeFromString = function(timeString) {
 		// console.log('getTimeFromString(' + timeString +')');
 		var timeStrings = timeString.split(':');
@@ -223,13 +236,13 @@ angular.module('havaschedule.services', [])
 		return tDate;
 	};
 
-/*
+	/*
 		adds a number of minutes to a time,
 		specified as a HH:mm string.
 
 		returnDate = TRUE returns a Date() object,
 		otherwise return a string in HH:mm:ss format.
-*/
+	*/
 	var addToTimeString = function(timeString, minutes, returnDate) {
 		// console.log('addToTimeString(' + timeString + ', ' + minutes + ')');
 		var theTime = getTimeFromString(timeString);
@@ -242,15 +255,15 @@ angular.module('havaschedule.services', [])
 		}
 	};
 
-/*
+	/*
 	iterates through the current bellschedule.  For each period,
 	calculate the start and end times, and check whether:
 		* start < current < end (meaning we are in this period -- return it)
 		* end < current < next period start (meaning we are in passing time -- return the next period).
 		Returns an object consisting of
 		{status:  'some status message', period: the array representing the appropriate period}
-*/
-		var calcBellUsingDates = function(bellschedule) {
+	*/
+	var calcBellUsingDates = function(bellschedule) {
 		var timeNow = dataServices.getCurrentTime();
 		// gets the array of periods from the bellschedule object
 		var periods = bellschedule.periods;

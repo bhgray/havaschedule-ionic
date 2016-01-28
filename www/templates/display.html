@@ -10,7 +10,7 @@
 
     <div class="list card passingcard" ng-show="passingTimeDiv">
       <div class="item item-divider">Current Status:  Passing Time to <span class="minorstandout">{{thePeriod}}</span></div>
-      <a href="#" class="item">Your next class: <span class="standout">{{theClass}}</span> in room {{theRoom}}</a>
+      <a href="#" class="item">Next class: <span class="standout">{{theClass}}</span><span ng-show="roomSpecified">  in room {{theRoom}}</span></a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
         {{theClass}} starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
@@ -19,7 +19,7 @@
 
     <div class="list card schedulecard" ng-show="inClassDiv">
       <div class="item item-divider">{{chosenBellScheduleName}} Bell Schedule</div>
-      <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span> in room {{theRoom}}</a>
+      <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
         Started <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer> ago (at {{periodStartString}})
@@ -34,30 +34,14 @@
       <div class="item item-divider dark">
         Timers
       </div>
-      <a href="#" class="item item-icon-left" id="timer1" ng-show="classTimers" ng-click="setTimer(15, 'timer1', toggle1); toggle1 = !toggle1" ng-init="toggle1=false" ng-class="{'active':toggle1}">
-        <i class="icon ion-android-alarm-clock"></i>
-        15 minutes <countTimer ng-show="toggle1" date="{{timer1End}}">&nbsp;</counttimer>
-      </a>
-      <a href="#" class="item item-icon-left"  id="timer2" ng-show="classTimers" ng-click="setTimer(10, 'timer2', toggle2); toggle2 = !toggle2" ng-init="toggle2=false" ng-class="{'active':toggle2}">
-        <i class="icon ion-android-alarm-clock"></i>
-        10 minutes <countTimer ng-show="toggle2" date="{{timer2End}}">&nbsp;</counttimer>
-      </a>
-      <a href="#" class="item item-icon-left"  id="timer3" ng-show="classTimers" ng-click="setTimer(1, 'timer3', toggle3); toggle3 = !toggle3" ng-init="toggle3=false" ng-class="{'active':toggle3}">
-        <i class="icon ion-android-alarm-clock"></i>
-        1 minute <countTimer ng-show="toggle3" date="{{timer3End}}">&nbsp;</counttimer>
-      </a>
-      <a href="#" class="item item-icon-left"  id="timer4" ng-show="classTimers" ng-click="setTimer(-10, 'timer4', toggle4); toggle4 = !toggle4" ng-init="toggle4=false" ng-class="{'active':toggle4}">
-        <i class="icon ion-android-alarm-clock"></i>
-        10 before end <countTimer ng-show="toggle4" date="{{timer4End}}">&nbsp;</counttimer>
-      </a>
-      <a href="#" class="item item-icon-left" id="timer5" ng-show="classTimers" ng-click="setTimer(-5, 'timer5', toggle5); toggle5 = !toggle5" ng-init="toggle5=false" ng-class="{'active':toggle5}">
-        <i class="icon ion-android-alarm-clock"></i>
-        5 before end <countTimer ng-show="toggle5" date="{{timer5End}}">&nbsp;</counttimer>
-      </a>
-      <a href="#" class="item item-icon-left" id="timer6" ng-show="classTimers" ng-click="setTimer(-2, 'timer6', toggle6); toggle6 = !toggle6" ng-init="toggle6=false" ng-class="{'active':toggle6}">
-        <i class="icon ion-android-alarm-clock"></i>
-        2 before end <countTimer ng-show="toggle6" date="{{timer6End}}">&nbsp;</counttimer>
-      </a>
+      <ion-list>
+        <ion-item ng-class="item-icon-left" ng-if="shouldShow(timer)" class="item-remove-animate" ng-repeat="timer in timers" item="timer" ng-click="activate(timer)">
+                <i class="icon ion-android-alarm-clock">  {{timer.description}}  </i>
+                <stopwatch data-date="timer.endTime" ng-if="timer.active" ></stopwatch>
+                <ion-option-button class="button-assertive" ng-click="edit(timer)">Edit</ion-option-button>
+        </ion-item>
+      </ion-list>
+
     </div>
 
   </ion-content>

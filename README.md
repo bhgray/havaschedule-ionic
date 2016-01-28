@@ -90,4 +90,36 @@
 
 ## 2016-01-23-1819 THE BLIZZARD
   * new branch:  0005_ui_refresh
-  * 
+
+## 2016-01-25-1010 SNOW DAY!
+  * branch:  0009_timer_end
+    - purpose:  create timer ending behavior.
+    - strategy:  
+      + create callbacks for counttimer directives?  that way we can swap in any ending behavior the user likes.
+      + one shorter way of doing that might be to incorporate a few different update methods and ending methods in the counttimer itself, and select the appropriate one using an attribute....
+    - steps:
+      + created a new directive "stopwatch" for use in the timers section only.  
+      + counttimer:  for period countdown/countup
+      + theCurrentTime:  for current date and time in first card
+      + stopwatch:  in timers card
+    - check out:  https://developer.mozilla.org/en-US/docs/Web/Events
+      + adding a new element.on function to catch the showing of the element initially.
+      + NO.  can't find the event to bind to.
+    - check out:  http://jsfiddle.net/ftfish/KyEr3/
+      + idea:  add the counttimer directive dynamically from the controller and configure it appropriately.
+      + oy.  this was painful.  had to use the angular.compile function to get the directive to compile dynamically from the controller.  
+      + see:  http://www.learn-angularjs-apps-projects.com/AngularJs/dynamically-add-directives-in-angularjs
+      + problem:  it keeps adding new ones -- need to be able to toggle in and out....
+      + ugly ugly ugly.
+    - OK new tactic.  Completely reforming the timers directives....
+    - OK ugly ugly.  frustrating.  doing a lot of work on fiddle...
+## 2016-01-26-1756 Snow Day 2
+  * new tactic: refactor timers completely as a data bound list of timers.
+    - display.html refactored
+    - problem:  directive not updating in response to the click... how to recompile once the new date is bound to the element?
+## 2016-01-27-1808 Wednesday
+  * timers work for now... kludgy though
+  * should recompile the directive once we add the date attribute, see:   
+      - http://stackoverflow.com/questions/26506841/change-angular-directive-element-attribute-dynamically
+    BUT....  instead kept a var in the directive and watched for the attribute change to signal a change to that var
+  * instead:  re-do the directive and pass in the whole timer.  calculate the endTime in the directive, and keep track of the active field in the timer.  At the end, set active to false, and the display will update automatically.

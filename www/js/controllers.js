@@ -127,11 +127,11 @@ function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
 
 })  // end of appCtrl
 
-.controller('DisplayCtrl', ['$scope', '$rootScope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification',
+.controller('DisplayCtrl', ['$scope', '$rootScope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
   // dumb programmer note:  the dependencies above ONLY need to get injected into the
   // controller function ONCE (below).  They are available as scoped variables to every
   // inner function w/out further injection.  Neat!
-function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, dateFilter) {
+function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
 
   // ******************************************************************************
   //  handle background and resultTime
@@ -141,10 +141,15 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
   $scope.$on('$ionicView.enter', function() {
       $scope.updateDateUI();
       $scope.updatePeriodUI();
+      $scope.updateTimerUI();
   });
 
   // this only happens when it's instantiated....
   $scope.currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
+
+  $scope.updateTimerUI = function() {
+    $scope.timers = dataServices.getTimers();
+  };
 
   $scope.updateDateUI = function() {
     // console.log('updateDateUI');
@@ -177,42 +182,68 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
       $scope.thePeriod = $scope.activePeriod.status;
       $scope.periodStart = '';
       $scope.periodEnd = '';
-    } else if ($scope.activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
-      console.log('activating passing time mode');
-      $scope.inClassDiv = false;
-      $scope.passingTimeDiv = true;
-      $scope.classTimers = false;
+    } else {
       theRosteredClass = timeCalcServices.getRosteredClass($scope.activePeriod.period, roster);
       $scope.theClass = theRosteredClass.name;
       $scope.thePeriod = $scope.activePeriod.period.name;
+      $scope.theRoom = theRosteredClass.room;
+      $scope.roomSpecified = true;
+
+      if ($scope.theRoom.trim().length < 2) {
+        $scope.roomSpecified = false;
+      }
       $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
       $scope.periodStartString = $scope.activePeriod.period.start;
-      $scope.periodEnd = '';
-    } else {
-      console.log('activating during school mode');
-      $scope.inClassDiv = true;
-      $scope.passingTimeDiv = false;
-      $scope.classTimers = true;
-      $scope.thePeriod = $scope.activePeriod.period.name;
-      theRosteredClass = timeCalcServices.getRosteredClass($scope.activePeriod.period, roster);
-      $scope.theClass = theRosteredClass.name;
-      $scope.theRoom = theRosteredClass.room;
-      // used in display.html directly
-      $scope.periodStartString = dateFilter($scope.activePeriod.period.start, "HH:mm");
-      $scope.periodEndString = dateFilter($scope.activePeriod.period.end, "HH:mm");
 
-      // used in display.html to initialize the counttimer elements (see directives.js)
-      $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
-      $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
+      if ($scope.activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
+        console.log('activating passing time mode');
+        $scope.inClassDiv = false;
+        $scope.passingTimeDiv = true;
+        $scope.classTimers = false;
+        $scope.periodEnd = '';
+      } else {
+        console.log('activating during school mode');
+        $scope.inClassDiv = true;
+        $scope.passingTimeDiv = false;
+        $scope.classTimers = true;
+        // used in display.html directly
+        $scope.periodStartString = dateFilter($scope.activePeriod.period.start, "HH:mm");
+        $scope.periodEndString = dateFilter($scope.activePeriod.period.end, "HH:mm");
+
+        // used in display.html to initialize the counttimer elements (see directives.js)
+        $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
+        $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
+      }
     }
   };
 
-    $scope.setTimer = function(amt, el, isActive) {
-      console.log('settimer for ' + amt);
+  $scope.setStopwatch = function(amt, isActive) {
+    // note that event is made available by angular
+    var ev = event;
+    var el = ev.srcElement;
+    // item has been activated and needs a new stopwatch
+    if (isActive) {
+      var periodEnd, timerEnd, nowTime;
+      if (amt < 0) {
+        periodEnd = new Date($scope.activePeriod.period.end);
+        timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + amt);
+      } else {
+        nowTime = new Date(dataServices.getCurrentTime());
+        timerEnd = nowTime.setMinutes(nowTime.getMinutes() + amt);
+      }
+      var timerEndString = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+      angular.element(el);
+    } else {
+      // item has been deactivated, and we need to remove the stopwatch from the DOM
+      var thewatch = document.getElementById('stopwatch' + amt);
+      thewatch.parentNode.removeChild(thewatch);
+    }
+  };
+
+    $scope.setTimer = function(amt, el, isActive, $event) {
+      // console.log('settimer for ' + $event);
       var periodEnd, timerEnd, nowTime;
       var scopeDataName = el + 'End';
-      console.log('scopeDataName = ' + scopeDataName);
-      // var bellSchedule = dataServices.getBellSchedules($rootScope.chosenBellScheduleName);
       if (amt < 0) {
         periodEnd = new Date($scope.activePeriod.period.end);
         timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + amt);
@@ -235,4 +266,34 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
       }
     };
 
+    $scope.activate = function(timer) {
+      if (!timer.active) {
+        var periodEnd, timerEnd, nowTime;
+        if (timer.duration < 0) {
+          periodEnd = new Date($scope.activePeriod.period.end);
+          timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + timer.duration);
+        } else {
+          nowTime = new Date(dataServices.getCurrentTime());
+          timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
+        }
+        timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+        console.log("timer set for " + timer.endTime);
+      } else {
+        console.log('timer cancelled');
+      }
+      timer.active = !timer.active;
+    };
+
+    $scope.edit = function(timer) {
+      console.log("editing " + timer);
+    };
+
+    $scope.shouldShow = function(timer) {
+      if (timer.duration < 0 && $scope.activePeriod.status == 'during school') {
+        return true;
+      } else if (timer.duration > 0) {
+        return true;
+      }
+      return false;
+    };
 }]);
