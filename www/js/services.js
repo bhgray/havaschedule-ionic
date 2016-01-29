@@ -124,25 +124,12 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getCurrentTime = function() {
-		var result;
+		var result = new Date();
 		var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
 		if (isDebug())
 		{
-			var debugTime = getDebugTime();
-			// console.log('debug mode:  time = ' + debugTime);
-				debugTime = debugTime.split('-');
-				// console.log('split = ' + debugTime);
-			var year = debugTime[0];
-			var month = debugTime[1] - 1;	// january = 0; user will use normal dates though
-			var day = debugTime[2];
-			var hour = debugTime[3];
-			var minute = debugTime[4];
-			var second = debugTime[5];
-			result = new Date(year, month, day, hour, minute, second);
-			result = new Date(result.getTime() + elapsed);
-		} else {
-			result = new Date();
-		}
+			result = new Date(getDebugTime().getTime() + elapsed);
+		} 
 		return result;
 	};
 

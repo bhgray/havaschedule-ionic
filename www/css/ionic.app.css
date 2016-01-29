@@ -9732,11 +9732,11 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
-.nowcard .item-divider, .schedulecard .item-divider, .passingcard .item-divider {
+.nowcard .item-divider, .schedulecard .item-divider, .passingcard .item-divider, .timercard .item-divider {
   text-align: left;
   font-weight: bolder; }
 
-.nowcard .item, .schedulecard .item, .passingcard .item {
+.nowcard .item, .schedulecard .item, .passingcard .item, .timercard .item {
   font-weight: bold; }
 
 .nowcard .item {

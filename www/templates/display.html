@@ -5,7 +5,7 @@
       <a href="#" class="item">{{theDate}}</a>
       <a href="#" class="item">{{theWeekday}}</a>
       <a href="#" class="item"><the-current-time></the-current-time></a>
-      <a href="#" class="item" ng-hide="debug"></a>
+      <a href="#" class="item" ng-show="debug"></a>
     </div>
 
     <div class="list card passingcard" ng-show="passingTimeDiv">
@@ -18,7 +18,7 @@
     </div>
 
     <div class="list card schedulecard" ng-show="inClassDiv">
-      <div class="item item-divider">{{chosenBellScheduleName}} Bell Schedule</div>
+      <div ng-click="showBell()" class="item item-divider">{{chosenBellScheduleName}} Bell Schedule</div>
       <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></a>
       <a href="#" class="item item-icon-left">
         <i class="icon ion-clock"></i>
@@ -30,8 +30,8 @@
       </a>
     </div>
 
-    <div class="list card">
-      <div class="item item-divider dark">
+    <div class="list card timercard">
+      <div class="item item-divider">
         Timers
       </div>
       <ion-list>

@@ -26,7 +26,12 @@ angular.module('havaschedule', [
   $rootScope.appStartTime = new Date();
   $rootScope.debug = false;
   $rootScope.debugStatusChange = false;
-  $rootScope.debugTime = '2016-01-16-08-05-00';
+  var debugtime = new Date();
+  debugtime.setHours(8);
+  debugtime.setMinutes(9);
+  debugtime.setSeconds(0);
+  debugtime.setMilliseconds(0);
+  $rootScope.debugTime = debugtime;
   $rootScope.devModeEnabled = true;
   // default bell schedule....
   $rootScope.chosenBellScheduleName = "Regular";
