@@ -7,8 +7,8 @@ angular.module('havaschedule.services', [])
 			{description: "30 minutes", duration: 30, active:false, endTime:""},
 			{description: "10 minutes", duration: 10, active:false, endTime:""},
 			{description: "2 minutes", duration: 2, active:false, endTime:""},
-			{description: "10 minutes before end", duration: -10, active:false, endTime:""},
 			{description: "20 minutes before end", duration: -20, active:false, endTime:""},
+			{description: "10 minutes before end", duration: -10, active:false, endTime:""},
 			{description: "2 minutes before end", duration: -2, active:false, endTime:""}
 		];
 		return timersList;
@@ -338,6 +338,7 @@ angular.module('havaschedule.services', [])
 		calcBellUsingDates: calcBellUsingDates,
 		getTimeFromString: getTimeFromString,
 		getRosteredClass: getRosteredClass,
+		isBeforeDates: isBeforeDates,
 		countdownFormatString: countdownFormatString
 	};
 });

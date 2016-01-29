@@ -58,6 +58,61 @@ angular.module('havaschedule.directives', [])
     };
 }])
 
+.directive('timerDisplay', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices',
+  function($interval, dateFilter, timeCalcServices, dataServices) {
+    return {
+      link: function(scope, element, attrs) {
+        var stopTimer;
+
+        function timeDiff(future, present) {
+          // pass along the difference in seconds.
+          var result = Math.floor((future - present) / 1000);
+          return result;
+        }
+
+        function updateTime() {
+          var d = dataServices.getCurrentTime();
+          var present = d.getTime();
+          // console.log(scope.timerobj);
+          var endTime = new Date(scope.timerobj.endTime).getTime();
+          var delta = timeDiff(endTime, present);
+          var timeDiffString = timeCalcServices.countdownFormatString(delta);
+          element.text(timeDiffString);
+          if (delta === 0) {
+            alarm();
+            endTimer();
+          }
+        }
+
+        function alarm() {
+          console.log('BYE BYE');
+        }
+
+        function endTimer() {
+          scope.timerobj.active = false;
+          // console.log("timer ended! " + scope.timerobj);
+          $interval.cancel(stopTimer);
+          unbindableWatcher();
+        }
+
+        stopTimer = $interval(updateTime, 1000);
+
+        var unbindableWatcher = scope.$watch('timerobj', function(newValue, oldValue) {
+             if (newValue)
+                 updateTime();
+            //  console.log('Binding');
+         }, true);
+
+        // listen on DOM destroy (removal) event, and cancel the next UI update
+        // to prevent updating time after the DOM element was removed.
+        element.on('$destroy', function() {
+          endTimer();
+        });
+      }
+    };
+  }
+])
+
 .directive('stopwatch', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
   function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
 

@@ -122,4 +122,9 @@
   * should recompile the directive once we add the date attribute, see:   
       - http://stackoverflow.com/questions/26506841/change-angular-directive-element-attribute-dynamically
     BUT....  instead kept a var in the directive and watched for the attribute change to signal a change to that var
-  * instead:  re-do the directive and pass in the whole timer.  calculate the endTime in the directive, and keep track of the active field in the timer.  At the end, set active to false, and the display will update automatically.
+  * instead:  re-do the directive and pass in the whole timer.  calculate the endTime in the directive, and keep track of the active field in the timer.  At the end, set active to false, and the display will update automatically.  TODO
+    - also:  http://code.tutsplus.com/tutorials/mastering-angularjs-directives--cms-22511
+   - and: http://www.sitepoint.com/practical-guide-angularjs-directives/
+   - and: http://www.toptal.com/angular-js/angular-js-demystifying-directives
+## 2016-01-28-1204-THU
+  *

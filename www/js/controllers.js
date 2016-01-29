@@ -271,17 +271,22 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
         var periodEnd, timerEnd, nowTime;
         if (timer.duration < 0) {
           periodEnd = new Date($scope.activePeriod.period.end);
-          timerEnd = periodEnd.setMinutes(periodEnd.getMinutes() + timer.duration);
+          timerEnd = new Date(periodEnd.setMinutes(periodEnd.getMinutes() + timer.duration));
+          if (timeCalcServices.isBeforeDates(periodEnd, timerEnd)) {
+              return;
+          }
         } else {
           nowTime = new Date(dataServices.getCurrentTime());
           timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
         }
         timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+        $scope.timerobj = timer;
         console.log("timer set for " + timer.endTime);
       } else {
         console.log('timer cancelled');
       }
       timer.active = !timer.active;
+      // $scope.triggerTimerRefresh = true;
     };
 
     $scope.edit = function(timer) {
