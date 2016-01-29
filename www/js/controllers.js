@@ -269,14 +269,17 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
     $scope.activate = function(timer) {
       if (!timer.active) {
         var periodEnd, timerEnd, nowTime;
+        nowTime = new Date(dataServices.getCurrentTime());
         if (timer.duration < 0) {
           periodEnd = new Date($scope.activePeriod.period.end);
-          timerEnd = new Date(periodEnd.setMinutes(periodEnd.getMinutes() + timer.duration));
-          if (timeCalcServices.isBeforeDates(periodEnd, timerEnd)) {
-              return;
+          var remainingTimeInPeriod = periodEnd.getTime() - nowTime.getTime();
+          remainingTimeInPeriod /= 60000;
+          if (remainingTimeInPeriod < Math.abs(timer.duration)) {
+            return;
           }
+          timerEnd = new Date(periodEnd);
+          timerEnd.setMinutes(timerEnd.getMinutes() + timer.duration);
         } else {
-          nowTime = new Date(dataServices.getCurrentTime());
           timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
         }
         timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
