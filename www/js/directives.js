@@ -61,6 +61,7 @@ angular.module('havaschedule.directives', [])
 .directive('timerDisplay', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices',
   function($interval, dateFilter, timeCalcServices, dataServices) {
     return {
+      template: '<div ng-model="timer"></div>',
       link: function(scope, element, attrs) {
         var stopTimer;
 
@@ -74,7 +75,7 @@ angular.module('havaschedule.directives', [])
           var d = dataServices.getCurrentTime();
           var present = d.getTime();
           // console.log(scope.timerobj);
-          var endTime = new Date(scope.timerobj.endTime).getTime();
+          var endTime = new Date(scope.timer.endTime).getTime();
           var delta = timeDiff(endTime, present);
           var timeDiffString = timeCalcServices.countdownFormatString(delta);
           element.text(timeDiffString);
@@ -89,7 +90,7 @@ angular.module('havaschedule.directives', [])
         }
 
         function endTimer() {
-          scope.timerobj.active = false;
+          scope.timer.active = false;
           // console.log("timer ended! " + scope.timerobj);
           $interval.cancel(stopTimer);
           unbindableWatcher();
