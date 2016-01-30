@@ -1,11 +1,10 @@
 <ion-view view-title="HavaSchedule">
   <ion-content>
     <div class="list card nowcard">
-      <div class="item item-divider dark">Now  <span ng-class="{'debug': debug}" ng-show="debug">DEBUG MODE</span></div>
+      <div class="item item-divider dark" ng-click="updateUI()">Now  <span ng-class="{'debug': debug}" ng-show="debug">DEBUG MODE</span></div>
       <a href="#" class="item">{{theDate}}</a>
       <a href="#" class="item">{{theWeekday}}</a>
       <a href="#" class="item"><the-current-time></the-current-time></a>
-      <a href="#" class="item" ng-show="debug"></a>
     </div>
 
     <div class="list card passingcard" ng-show="passingTimeDiv">

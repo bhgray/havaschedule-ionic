@@ -147,6 +147,11 @@ function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, d
   // this only happens when it's instantiated....
   $scope.currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
 
+  $scope.updateUI = function() {
+    $scope.updateDateUI();
+    $scope.updatePeriodUI();
+  };
+
   $scope.updateTimerUI = function() {
     $scope.timers = dataServices.getTimers();
   };
