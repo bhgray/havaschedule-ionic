@@ -126,5 +126,8 @@
     - also:  http://code.tutsplus.com/tutorials/mastering-angularjs-directives--cms-22511
    - and: http://www.sitepoint.com/practical-guide-angularjs-directives/
    - and: http://www.toptal.com/angular-js/angular-js-demystifying-directives
-## 2016-01-28-1204-THU
-  *
+## 2016-01-30-1204-SAT
+  * notifications in -- 0010_timer_not
+    - they fire SLOWLY!
+    - need sound.
+    - otherwise good -- the timer disappears at the end, etc...
