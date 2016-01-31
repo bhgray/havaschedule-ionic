@@ -9755,4 +9755,5 @@ a.button {
   font-style: italic; }
 
 .debug {
-  background-color: orange; }
+  color: orange;
+  font-weight: bolder; }

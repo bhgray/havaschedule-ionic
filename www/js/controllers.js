@@ -127,8 +127,8 @@ angular.module('havaschedule.controllers', [])
 
 })  // end of appCtrl
 
-.controller('DisplayCtrl', ['$scope', '$rootScope', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
-  function($scope, $rootScope, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
+.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
+  function($scope, $rootScope, $log, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
 
     // ******************************************************************************
     //  handle background and resultTime
@@ -154,7 +154,6 @@ angular.module('havaschedule.controllers', [])
     };
 
     $scope.updateDateUI = function() {
-      // console.log('updateDateUI');
       $scope.theDate = dateTimeServices.dateString($scope.currentDateTimeWithDebug);
       $scope.theWeekday = dateTimeServices.dayOfWeekString($scope.currentDateTimeWithDebug);
       $scope.debug = dataServices.isDebug();
@@ -220,38 +219,38 @@ angular.module('havaschedule.controllers', [])
     };
 
     $scope.activate = function(timer) {
-      if (!timer.active) {
+      if (timer.active === false) {
         var periodEnd, timerEnd, nowTime;
         nowTime = new Date(dataServices.getCurrentTime());
-        periodEnd = new Date($scope.activePeriod.period.end);
-        if (timer.duration < 0) {
+        if (timer.duration < 0)
+        {
+          periodEnd = new Date($scope.activePeriod.period.end);
           // check to make sure that there is enough time left in the period to permit the alarm
           var remainingTimeInPeriod = periodEnd.getTime() - nowTime.getTime();
           remainingTimeInPeriod /= 60000; // convert to minutes
-          if (remainingTimeInPeriod < Math.abs(timer.duration)) {
-            return;
-          }
+          if (remainingTimeInPeriod < Math.abs(timer.duration)) return;
           timerEnd = new Date(periodEnd);
           timerEnd.setMinutes(timerEnd.getMinutes() + timer.duration);
         } else {
           timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
         }
-        // create the notification
-        $cordovaLocalNotification.add({
-            id: "1234",
-            date: timerEnd,
-            message: "Timer Ended",
-            title: timer.description,
-            autoCancel: true,
+        $cordovaLocalNotification.schedule({
+            id: timer.id,
+            at: timerEnd,
+            text: "Timer Ended at" + dateFilter(timer.endTime, 'HH:mm'),
             sound: null
         }).then(function () {
-            console.log("The notification has been set");
-        });
+            $log.debug("The notification has been set for " + dateFilter(timer.endTime, 'HH:mm'));
+        }, $scope);
         timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+        $log.debug(timer);
         $scope.timerobj = timer;
-        console.log("timer set for " + timer.endTime);
+        $log.debug("timer set for " + timer.endTime);
       } else {
-        console.log('timer cancelled');
+        console.log('timer cancelled for id:  ' + timer.id);
+        $cordovaLocalNotification.cancel(timer.id, function() {
+          console.log("notification cancelled also");
+        });
       }
       timer.active = !timer.active;
     };

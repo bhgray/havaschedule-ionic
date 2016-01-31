@@ -4,12 +4,12 @@ angular.module('havaschedule.services', [])
 
 	var getTimers = function() {
 		var timersList = [
-			{description: "30 minutes", duration: 30, active:false, endTime:""},
-			{description: "10 minutes", duration: 10, active:false, endTime:""},
-			{description: "2 minutes", duration: 2, active:false, endTime:""},
-			{description: "20 minutes before end", duration: -20, active:false, endTime:""},
-			{description: "10 minutes before end", duration: -10, active:false, endTime:""},
-			{description: "2 minutes before end", duration: -2, active:false, endTime:""}
+			{description: "30 minutes", duration: 30, active:false, endTime:"", id:"1"},
+			{description: "10 minutes", duration: 10, active:false, endTime:"", id:"2"},
+			{description: "1 minute", duration: 1, active:false, endTime:"", id:"3"},
+			{description: "20 minutes before end", duration: -20, active:false, endTime:"", id:"4"},
+			{description: "10 minutes before end", duration: -10, active:false, endTime:"", id:"5"},
+			{description: "2 minutes before end", duration: -2, active:false, endTime:"", id:"6"}
 		];
 		return timersList;
 	};
@@ -129,7 +129,7 @@ angular.module('havaschedule.services', [])
 		if (isDebug())
 		{
 			result = new Date(getDebugTime().getTime() + elapsed);
-		} 
+		}
 		return result;
 	};
 
