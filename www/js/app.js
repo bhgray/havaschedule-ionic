@@ -10,12 +10,9 @@ angular.module('havaschedule', [
 
 .run(function($ionicPlatform, $rootScope, dateFilter) {
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
-
     }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
@@ -41,13 +38,19 @@ angular.module('havaschedule', [
 
 })
 
+// see:  http://stackoverflow.com/questions/27874855/how-to-place-ionic-tabs-at-the-bottom-of-the-screen
+.config(['$ionicConfigProvider', function($ionicConfigProvider) {
+
+    $ionicConfigProvider.tabs.position('top'); // other values: bottom
+
+}])
+
 .config(['$logProvider', function($logProvider){
     $logProvider.debugEnabled(true);
 }])
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-
     .state('tab', {
       url: '/tab',
       abstract: true,
