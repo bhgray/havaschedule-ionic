@@ -76,7 +76,19 @@ angular.module('havaschedule.services', [])
 							{period: 2, name: 'Period 2', start: '07:52:00', end: '', duration: 0.5},
 							{period: 3, name: 'Period 3', start: '07:53:00', end: '', duration: 0.5}
 						]},
-					];
+					{name: 'Midterms',
+						periods: [
+							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 20},
+							{period: 1, name: 'Period 1', start: '08:13:00', end: '', duration: 90},
+							{period: 3, name: 'Period 3', start: '09:46:00', end: '', duration: 90},
+							{period: 4, name: 'Period 4', start: '11:19:00', end: '', duration: 33},
+							{period: 4, name: 'Period 5', start: '11:55:00', end: '', duration: 33},
+							{period: 6, name: 'Period 6', start: '12:31:00', end: '', duration: 33},
+							{period: 7, name: 'Period 7', start: '13:07:00', end: '', duration: 33},
+							{period: 8, name: 'Period 8', start: '13:43:00', end: '', duration: 33},
+							{period: 2, name: 'Period 2', start: '14:19:00', end: '', duration: 33}
+						]}
+				];
 		if (which === 'all') {
 			return bellschedules;
 		} else {
@@ -214,7 +226,7 @@ angular.module('havaschedule.services', [])
 			javascript Date() object
 	*/
 	var getTimeFromString = function(timeString) {
-		// console.log('getTimeFromString(' + timeString +')');
+		// $log.debug('getTimeFromString(' + timeString +')');
 		var timeStrings = timeString.split(':');
 		var tDate = dataServices.getCurrentTime();
 		tDate.setHours(timeStrings[0]);
@@ -231,10 +243,10 @@ angular.module('havaschedule.services', [])
 		otherwise return a string in HH:mm:ss format.
 	*/
 	var addToTimeString = function(timeString, minutes, returnDate) {
-		// console.log('addToTimeString(' + timeString + ', ' + minutes + ')');
+		// $log.debug('addToTimeString(' + timeString + ', ' + minutes + ')');
 		var theTime = getTimeFromString(timeString);
 		var resultTime = new Date(theTime.getTime() + minutes * 60000);
-		// console.log('addToTimeString result ->' + resultTime);
+		// $log.debug('addToTimeString result ->' + resultTime);
 		if (returnDate) {
 			return resultTime;
 		} else {
@@ -258,25 +270,27 @@ angular.module('havaschedule.services', [])
 		// var timeNowString = dateFilter(timeNow, "HH:mm:ss");
 		var passingTime = false;
 		var duringSchool = false;
-		// console.log("calcBell:  current time = " + timeNowString);
+		// $log.debug("calcBell:  current time = " + timeNowString);
 		for (var periodID = 0; periodID < periods.length; periodID++) {
 			var p = periods[periodID];
 			var periodStart = p.start;
 			var periodEnd = p.end;
-			// console.log('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
+			// $log.debug('checking ' + periodID + ': ' + periodStart + " - " + periodEnd);
 			if (periodID < periods.length - 1) {
 				var nextID = periodID + 1;
 				var nextPeriodStart = periods[nextID].start;
-				// console.log(nextPeriodStart);
+				// $log.debug(nextPeriodStart);
 				passingTime = isBeforeDates(periodEnd, timeNow) && isBeforeDates(timeNow, nextPeriodStart);
 				if (passingTime || isEqualDates(timeNow, periodEnd)) {
-					foundPeriod = {status: 'passing time', period: periods[periodID + 1]};	// passing time!
+					foundPeriod.status = 'passing time';
+					foundPeriod.period = periods[periodID + 1];	// passing time!
 				}
 			}
 			if (!passingTime) {
 				duringSchool = isBeforeDates(periodStart, timeNow) && isBeforeDates(timeNow, periodEnd);
 				if (duringSchool  || isEqualDates(timeNow, periodStart)) {
-						foundPeriod = {status: 'during school', period: periods[periodID]};
+						foundPeriod.status = 'during school';
+						foundPeriod.period = periods[periodID];
 				}
 			}
 		}
@@ -288,7 +302,7 @@ angular.module('havaschedule.services', [])
 		var foundClass;
 		for (var courseID in roster) {
 			var rosteredPeriodID = roster[courseID].period;
-			if (rosteredPeriodID == periodNumber) {
+			if (rosteredPeriodID === periodNumber) {
 				foundClass = roster[courseID];
 			}
 		}
@@ -300,7 +314,7 @@ angular.module('havaschedule.services', [])
 		// huh?  this is returning -1 for day?  given an input of -2783?
 		if (t < 0) { t *= -1; }
 		days = Math.floor(t / 86400);
-		// console.log("cdfs days: " + days);
+		// $log.debug("cdfs days: " + days);
 		t -= days * 86400;
 		hours = Math.floor(t / 3600) % 24;
 		t -= hours * 3600;

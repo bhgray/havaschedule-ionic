@@ -11,7 +11,7 @@ angular.module('havaschedule.controllers', [])
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
   // $scope.$on('$ionicView.enter', function(e) {
-  //   // console.log('$ionicView.enter triggered (see app.js)');
+  //   // $log.debug('$ionicView.enter triggered (see app.js)');
   // });
 
   // ******************************************************************************
@@ -40,7 +40,7 @@ angular.module('havaschedule.controllers', [])
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
+    $log.debug('Doing login', $scope.loginData);
 
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
@@ -108,13 +108,13 @@ angular.module('havaschedule.controllers', [])
 
   // Perform the debug toggle action when the user submits the debug form
   $scope.doDebug = function() {
-    // console.log('Doing debug', $scope.debugData);
+    // $log.debug('Doing debug', $scope.debugData);
     $rootScope.debugStatusChange = true;
     // incrementing the app system time in debug mode uses
     // the delta from appStartTime, so we need to reset this...
     if ($scope.debugData.debugEnabled) {
       $rootScope.appStartTime = new Date();
-      console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+      $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
       dataServices.setDebugTime($scope.debugData.timeData);
     }
     dataServices.setDebug($scope.debugData.debugEnabled);
@@ -127,15 +127,15 @@ angular.module('havaschedule.controllers', [])
 
 })  // end of appCtrl
 
-.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
-  function($scope, $rootScope, $log, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
+.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup', '$cordovaNativeAudio', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
+  function($scope, $rootScope, $log, $ionicPopup, $cordovaNativeAudio, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
 
     // ******************************************************************************
     //  handle background and resultTime
     //  see:  https://cordova.apache.org/docs/en/latest/cordova/events/events.resume.html
     // ******************************************************************************
 
-    $scope.$on('$ionicView.enter', function() {
+    $scope.$on('$ionicView.enter', function($cordovaNativeAudio) {
         $scope.updateDateUI();
         $scope.updatePeriodUI();
         $scope.updateTimerUI();
@@ -172,10 +172,10 @@ angular.module('havaschedule.controllers', [])
       $scope.activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
       var theRosteredClass;
       $scope.chosenBellScheduleName = $rootScope.chosenBellScheduleName;
-      // console.log('updatePeriodUI found:  ' + activePeriod.status);
+      // $log.debug('updatePeriodUI found:  ' + activePeriod.status);
 
       if ($scope.activePeriod.status == 'not during school hours') {        // not during school hours
-        console.log('activating non school hours mode');
+        $log.debug('activating non school hours mode');
         $scope.inClassDiv = false;
         $scope.passingTimeDiv = false;
         $scope.classTimers = false;
@@ -197,13 +197,13 @@ angular.module('havaschedule.controllers', [])
         $scope.periodStartString = $scope.activePeriod.period.start;
 
         if ($scope.activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
-          console.log('activating passing time mode');
+          $log.debug('activating passing time mode');
           $scope.inClassDiv = false;
           $scope.passingTimeDiv = true;
           $scope.classTimers = false;
           $scope.periodEnd = '';
         } else {
-          console.log('activating during school mode');
+          $log.debug('activating during school mode');
           $scope.inClassDiv = true;
           $scope.passingTimeDiv = false;
           $scope.classTimers = true;
@@ -234,29 +234,30 @@ angular.module('havaschedule.controllers', [])
         } else {
           timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
         }
+        timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
         $cordovaLocalNotification.schedule({
             id: timer.id,
             at: timerEnd,
-            text: "Timer Ended at" + dateFilter(timer.endTime, 'HH:mm'),
-            sound: null
-        }).then(function () {
-            $log.debug("The notification has been set for " + dateFilter(timer.endTime, 'HH:mm'));
-        }, $scope);
-        timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+            text: "Timer Ended at " + dateFilter(timerEnd, 'HH:mm:ss'),
+            sound:  'file://sounds/bell.wav'
+        }).then(function() {
+          $log.debug("notification " + timer.id + " set for " + dateFilter(timerEnd, "HH:mm:ss"));
+        });
+
         $log.debug(timer);
         $scope.timerobj = timer;
         $log.debug("timer set for " + timer.endTime);
       } else {
-        console.log('timer cancelled for id:  ' + timer.id);
+        $log.debug('timer cancelled for id:  ' + timer.id);
         $cordovaLocalNotification.cancel(timer.id, function() {
-          console.log("notification cancelled also");
+          $log.debug("notification cancelled also");
         });
       }
       timer.active = !timer.active;
     };
 
     $scope.edit = function(timer) {
-      console.log("editing " + timer);
+      $log.debug("editing " + timer);
     };
 
     $scope.shouldShow = function(timer) {

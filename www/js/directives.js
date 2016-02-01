@@ -2,8 +2,8 @@ angular.module('havaschedule.directives', [])
 
 // note:  http://codepen.io/garethdweaver/pen/eNpWBb for timer ideas
 
-.directive('counttimer', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
-  function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
+.directive('counttimer', ['$interval', '$log', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
+  function($interval, $log, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
 
     return function(scope, element, attrs) {
       var stopTimer;
@@ -28,10 +28,10 @@ angular.module('havaschedule.directives', [])
 
         if ($rootScope.debugStatusChange) {
           updateRequired = true;
-          console.log("counttimer (directive.js):  debugStatusChange");
+          $log.debug("counttimer (directive.js):  debugStatusChange");
         } else if ($rootScope.bellScheduleStatusChange) {
           updateRequired = true;
-          console.log("counttimer (directive.js):  bellScheduleStatusChange");
+          $log.debug("counttimer (directive.js):  bellScheduleStatusChange");
         }
 
         if (updateRequired) {
@@ -58,8 +58,8 @@ angular.module('havaschedule.directives', [])
     };
 }])
 
-.directive('timerDisplay', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices',
-  function($interval, dateFilter, timeCalcServices, dataServices) {
+.directive('timerDisplay', ['$interval', '$log', '$cordovaLocalNotification', '$ionicPopup', 'dateFilter', 'timeCalcServices', 'dataServices',
+  function($interval, $log, $cordovaLocalNotification, $ionicPopup, dateFilter, timeCalcServices, dataServices) {
     return {
       template: '<div ng-model="timer"></div>',
       link: function(scope, element, attrs) {
@@ -74,7 +74,7 @@ angular.module('havaschedule.directives', [])
         function updateTime() {
           var d = dataServices.getCurrentTime();
           var present = d.getTime();
-          // console.log(scope.timerobj);
+          // $log.debug(scope.timerobj);
           var endTime = new Date(scope.timer.endTime).getTime();
           var delta = timeDiff(endTime, present);
           var timeDiffString = timeCalcServices.countdownFormatString(delta);
@@ -86,12 +86,21 @@ angular.module('havaschedule.directives', [])
         }
 
         function alarm() {
-          console.log('BYE BYE');
+          var alertPopup = $ionicPopup.alert({
+            title:'Timer Done',
+            template: 'Done!'
+          });
+          alertPopup.then(function(res) {
+            $log.debug('alert cancelled');
+            $cordovaLocalNotification.cancel(scope.timer.id, function() {
+              $log.debug("notification cancelled also");
+            });
+          });
         }
 
         function endTimer() {
           scope.timer.active = false;
-          // console.log("timer ended! " + scope.timerobj);
+
           $interval.cancel(stopTimer);
           unbindableWatcher();
         }
@@ -101,7 +110,6 @@ angular.module('havaschedule.directives', [])
         var unbindableWatcher = scope.$watch('timerobj', function(newValue, oldValue) {
              if (newValue)
                  updateTime();
-            //  console.log('Binding');
          }, true);
 
         // listen on DOM destroy (removal) event, and cancel the next UI update
@@ -114,54 +122,60 @@ angular.module('havaschedule.directives', [])
   }
 ])
 
-.directive('stopwatch', ['$interval', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
-  function($interval, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
+// .directive('stopwatch', ['$interval', '$log',  'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
+//   function($interval,  $log, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
+//
+//     return function(scope, element, attrs) {
+//       var stopTimer;
+//       var endTime;
+//
+//       // scope.$watch(attrs.date, function (newDateString) {
+//       //   endTime = new Date(newDateString).getTime();
+//       //   updateTime();
+//       // });
+//
+//       function timeDiff(future, present) {
+//         // pass along the difference in seconds.
+//         var result = Math.floor((future - present) / 1000);
+//         return result;
+//       }
+//
+//       function updateTime() {
+//         var d = dataServices.getCurrentTime();
+//         var present = d.getTime();
+//         var delta = timeDiff(endTime, present);
+//         var timeDiffString = timeCalcServices.countdownFormatString(delta);
+//         element.text(timeDiffString);
+//         if (delta === 0) {
+//           endTimer();
+//         }
+//       }
+//
+//       function endTimer() {
+//         var alertPopup = $ionicPopup.alert({
+//           title:'Timer Done',
+//           template: 'Done!'
+//         });
+//         alertPopup.then(function(res) {
+//           console.debug('alert cancelled');
+//         });
+//         $log.debug("timer ended!  beep!");
+//         $interval.cancel(stopTimer);
+//       }
+//
+//         stopTimer = $interval(updateTime, 1000);
+//         $log.debug("stopwatch started");
+//
+//       // listen on DOM destroy (removal) event, and cancel the next UI update
+//       // to prevent updating time after the DOM element was removed.
+//       element.on('$destroy', function() {
+//         $interval.cancel(stopTimer);
+//       });
+//     };
+// }])
 
-    return function(scope, element, attrs) {
-      var stopTimer;
-      var endTime;
-
-      scope.$watch(attrs.date, function (newDateString) {
-        endTime = new Date(newDateString).getTime();
-        updateTime();
-      });
-
-      function timeDiff(future, present) {
-        // pass along the difference in seconds.
-        var result = Math.floor((future - present) / 1000);
-        return result;
-      }
-
-      function updateTime() {
-        var d = dataServices.getCurrentTime();
-        var present = d.getTime();
-        var delta = timeDiff(endTime, present);
-        var timeDiffString = timeCalcServices.countdownFormatString(delta);
-        element.text(timeDiffString);
-        if (delta === 0) {
-          endTimer();
-        }
-      }
-
-      function endTimer() {
-        console.log("timer ended!  beep!");
-        $interval.cancel(stopTimer);
-      }
-
-        stopTimer = $interval(updateTime, 1000);
-        console.log("stopwatch started");
-
-      // listen on DOM destroy (removal) event, and cancel the next UI update
-      // to prevent updating time after the DOM element was removed.
-      element.on('$destroy', function() {
-        $interval.cancel(stopTimer);
-      });
-    };
-}])
-
-.directive('theCurrentTime', ['$interval', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope',
-
-  function($interval, dateFilter, dataServices, timeCalcServices, $rootScope) {
+.directive('theCurrentTime', ['$interval',  '$log', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope',
+  function($interval,  $log, dateFilter, dataServices, timeCalcServices, $rootScope) {
     // return the directive link function. (compile function not needed)
     return function(scope, element, attrs) {
       var format;  // date format string
@@ -172,7 +186,7 @@ angular.module('havaschedule.directives', [])
       // don't know if we will get this call at the very second it's due...
       function findTimeInArray(element, index, array) {
           var d = dataServices.getCurrentTime();
-          // console.log('findTimeInArray comparing ' + d + ' and ' + element);
+          // $log.debug('findTimeInArray comparing ' + d + ' and ' + element);
           if (d.getHours() == element.getHours() && d.getMinutes() == element.getMinutes()) {
             return true;
           }
@@ -188,9 +202,9 @@ angular.module('havaschedule.directives', [])
         var updateRequired = false;
         if ($rootScope.debugStatusChange) {
           updateRequired = true;
-          console.log("counttimer (directive.js):  debugStatusChange");
+          $log.debug("counttimer (directive.js):  debugStatusChange");
         } else if ($rootScope.bellScheduleStatusChange) {
-          console.log("counttimer (directive.js):  bellScheduleStatusChange");
+          $log.debug("counttimer (directive.js):  bellScheduleStatusChange");
           updateRequired = true;
         }
         if (updateRequired) {
@@ -212,7 +226,7 @@ angular.module('havaschedule.directives', [])
         if (d.getSeconds() === 0) {
             var matchingTimes = list.find(findTimeInArray);
             if (matchingTimes !== undefined) {
-              console.log("counttimer (directive.js):  matchingTimes found");
+              $log.debug("counttimer (directive.js):  matchingTimes found");
               scope.updateDateUI();
               scope.updatePeriodUI();
               scope.updateTimerUI();

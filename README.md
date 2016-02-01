@@ -135,3 +135,7 @@
   * see (for gapdebug):  https://www.genuitec.com/products/gapdebug/learning-center/
   * switching for the moment to the problem of logging....  want to be able to use adb.exe and logcat....
   * see:  https://github.com/katzer/cordova-plugin-local-notifications/wiki/Upgrade-Guide
+  * and:  https://github.com/katzer/cordova-plugin-local-notifications/wiki/11.-Samples
+## 2016-01-31-1507-SUN
+  * http://gonehybrid.com/how-to-add-sound-effects-to-your-ionic-app-with-native-audio/
+  * installed using ionic plugin add cordova-plugin-nativeaudio

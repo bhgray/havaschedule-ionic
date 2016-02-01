@@ -24,7 +24,8 @@
     {
       "locator": "https://github.com/katzer/cordova-plugin-local-notifications.git",
       "id": "de.appplant.cordova.plugin.local-notification"
-    }
+    },
+    "cordova-plugin-nativeaudio"
   ],
   "cordovaPlatforms": [
     "android",

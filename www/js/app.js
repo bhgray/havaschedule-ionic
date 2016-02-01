@@ -37,7 +37,7 @@ angular.module('havaschedule', [
   $rootScope.chosenBellScheduleName = "Regular";
   $rootScope.bellScheduleStatusChange = false;
   $rootScope.timeNotificationList = undefined;
-  console.log("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+  console.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
 
 })
 
@@ -67,6 +67,6 @@ angular.module('havaschedule', [
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/display');
 
-  console.log("config app.js");
+  console.debug("config app.js");
 
 });
