@@ -74,6 +74,16 @@ angular.module('havaschedule', [
       }
     })
 
+    .state('tab.roster-detail', {
+      url: '/roster/:classId',
+      views: {
+        'tab-roster': {
+          templateUrl: 'templates/roster-detail.html',
+          controller: 'RosterDetailCtrl'
+        }
+      }
+    })
+
     .state('tab.bells', {
       url: '/bells',
       views: {
@@ -87,7 +97,7 @@ angular.module('havaschedule', [
     .state('tab.bell-detail', {
     url: '/bells/:bellId',
     views: {
-      'tab-chats': {
+      'tab-bells': {
         templateUrl: 'templates/bell-detail.html',
         controller: 'BellDetailCtrl'
       }
@@ -103,7 +113,7 @@ angular.module('havaschedule', [
       }
     }
   });
-  
+
   $urlRouterProvider.otherwise('/tab/dash');
 
 //  to restore:  uncomment the lines below:
