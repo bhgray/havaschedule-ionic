@@ -348,4 +348,18 @@ angular.module('havaschedule.controllers', [])
     //  var set in app.js
     $scope.devModeEnabled = $rootScope.devModeEnabled;
   }
+])
+
+.controller('RosterCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
+  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter) {
+    $scope.roster = dataServices.getRoster();
+  }
+
+])
+
+.controller('BellsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
+  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter) {
+    $scope.bells = dataServices.getBellSchedules('all');
+  }
+
 ]);

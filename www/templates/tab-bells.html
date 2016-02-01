@@ -1,0 +1,17 @@
+<ion-view view-title="tab-prefs">
+  <ion-content>
+    <div class="list card timercard">
+      <div class="item item-divider">
+        BellSchedules
+      </div>
+      <ion-list>
+        <ion-item ng-class="item-icon-left" class="item-remove-animate" ng-repeat="bell in bells" item="bell">
+          <i class="icon ion-android-notification"> {{bell.name}}</i>
+        </ion-item>
+      </ion-list>
+
+    </div>
+
+
+  </ion-content>
+</ion-view>

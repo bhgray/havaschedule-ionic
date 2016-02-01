@@ -1,21 +1,20 @@
 <ion-view view-title="tab-prefs">
     <ion-content>
+      <div class="list card timercard">
+        <div class="item item-divider">
+          Preferences
+        </div>
       <ion-list>
-        <ion-item menu-close href="#/app/display">
+        <ion-item menu-close href="#/tab/tab-dash">
           Main View
         </ion-item>
         <ion-item menu-close ng-click="showBell()">
-          Choose BellSchedule
-        </ion-item>
-        <ion-item menu-close href="#">
-          Edit Roster (to come)
-        </ion-item>
-        <ion-item menu-close href="#">
-          Prefs (to come)
+          Choose Current BellSchedule
         </ion-item>
         <ion-item menu-close ng-show="devModeEnabled" ng-click="debug()">
           Toggle Debug
         </ion-item>
 
       </ion-list>
+    </div>
     </ion-content>
