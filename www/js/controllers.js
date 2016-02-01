@@ -1,131 +1,128 @@
 angular.module('havaschedule.controllers', [])
 
-.constant('PASSING_TIME', '-2')
-.constant('NOT_SCHOOL_HOURS', '-1')
-
-.controller('AppCtrl',
-  function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
-
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  // $scope.$on('$ionicView.enter', function(e) {
-  //   // $log.debug('$ionicView.enter triggered (see app.js)');
-  // });
-
-  // ******************************************************************************
-  //  login
-  // ******************************************************************************
-
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    $log.debug('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
-
-  // ******************************************************************************
-  //  choose bellschedule
-  // ******************************************************************************
-
-  $ionicModal.fromTemplateUrl('templates/choosebell.html', {
-    scope:$scope
-  }).then(function(modal) {
-    $scope.chooseBellModal = modal;
-  });
-
-  // Triggered in the debug modal to close it
-  $scope.closeBellChooser = function() {
-    $scope.chooseBellModal.hide();
-  };
-
-  $scope.changeBellSelection = function(selection) {
-      $rootScope.chosenBellScheduleName = $scope.items[selection];
-      $rootScope.bellScheduleStatusChange = true;
-      $scope.closeBellChooser();
-  };
-
-  // Open the login modal
-  $scope.showBell = function() {
-    $scope.items = [];
-    var bells = dataServices.getBellSchedules('all');
-    for (var bellID in bells) {
-      $scope.items.push(bells[bellID].name);
-    }
-    $scope.chooseBellModal.show();
-  };
-
-  // ******************************************************************************
-  //  debug
-  // ******************************************************************************
-
-  // Form data for the debug modal
-  $scope.debugData = {
-    timeData: dataServices.getDebugTime(),
-    debugEnabled: dataServices.isDebug()
-  };
-
-  $ionicModal.fromTemplateUrl('templates/debug.html', {
-    scope:$scope
-  }).then(function(modal) {
-    $scope.debugmodal = modal;
-  });
-
-  // Triggered in the debug modal to close it
-  $scope.closeDebug = function() {
-    $scope.debugmodal.hide();
-  };
-
-  // Open the login modal
-  $scope.debug = function() {
-    $scope.debugmodal.show();
-  };
-
-  // Perform the debug toggle action when the user submits the debug form
-  $scope.doDebug = function() {
-    // $log.debug('Doing debug', $scope.debugData);
-    $rootScope.debugStatusChange = true;
-    // incrementing the app system time in debug mode uses
-    // the delta from appStartTime, so we need to reset this...
-    if ($scope.debugData.debugEnabled) {
-      $rootScope.appStartTime = new Date();
-      $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
-      dataServices.setDebugTime($scope.debugData.timeData);
-    }
-    dataServices.setDebug($scope.debugData.debugEnabled);
-    $scope.closeDebug();
-  };
-
-  //  var set in app.js
-  $scope.devModeEnabled = $rootScope.devModeEnabled;
-
-
-})  // end of appCtrl
+// .controller('AppCtrl',
+//   function($scope, $ionicModal, $timeout, dataServices, $rootScope, dateFilter) {
+//
+//   // With the new view caching in Ionic, Controllers are only called
+//   // when they are recreated or on app start, instead of every page change.
+//   // To listen for when this page is active (for example, to refresh data),
+//   // listen for the $ionicView.enter event:
+//   // $scope.$on('$ionicView.enter', function(e) {
+//   //   // $log.debug('$ionicView.enter triggered (see app.js)');
+//   // });
+//
+//   // ******************************************************************************
+//   //  login
+//   // ******************************************************************************
+//
+//   // Form data for the login modal
+//   $scope.loginData = {};
+//
+//   // Create the login modal that we will use later
+//   $ionicModal.fromTemplateUrl('templates/login.html', {
+//     scope: $scope
+//   }).then(function(modal) {
+//     $scope.modal = modal;
+//   });
+//
+//   // Triggered in the login modal to close it
+//   $scope.closeLogin = function() {
+//     $scope.modal.hide();
+//   };
+//
+//   // Open the login modal
+//   $scope.login = function() {
+//     $scope.modal.show();
+//   };
+//
+//   // Perform the login action when the user submits the login form
+//   $scope.doLogin = function() {
+//     $log.debug('Doing login', $scope.loginData);
+//
+//     // Simulate a login delay. Remove this and replace with your login
+//     // code if using a login system
+//     $timeout(function() {
+//       $scope.closeLogin();
+//     }, 1000);
+//   };
+//
+//   // ******************************************************************************
+//   //  choose bellschedule
+//   // ******************************************************************************
+//
+//   $ionicModal.fromTemplateUrl('templates/choosebell.html', {
+//     scope:$scope
+//   }).then(function(modal) {
+//     $scope.chooseBellModal = modal;
+//   });
+//
+//   // Triggered in the debug modal to close it
+//   $scope.closeBellChooser = function() {
+//     $scope.chooseBellModal.hide();
+//   };
+//
+//   $scope.changeBellSelection = function(selection) {
+//       $rootScope.chosenBellScheduleName = $scope.items[selection];
+//       $rootScope.bellScheduleStatusChange = true;
+//       $scope.closeBellChooser();
+//   };
+//
+//   // Open the login modal
+//   $scope.showBell = function() {
+//     $scope.items = [];
+//     var bells = dataServices.getBellSchedules('all');
+//     for (var bellID in bells) {
+//       $scope.items.push(bells[bellID].name);
+//     }
+//     $scope.chooseBellModal.show();
+//   };
+//
+//   // ******************************************************************************
+//   //  debug
+//   // ******************************************************************************
+//
+//   // Form data for the debug modal
+//   $scope.debugData = {
+//     timeData: dataServices.getDebugTime(),
+//     debugEnabled: dataServices.isDebug()
+//   };
+//
+//   $ionicModal.fromTemplateUrl('templates/debug.html', {
+//     scope:$scope
+//   }).then(function(modal) {
+//     $scope.debugmodal = modal;
+//   });
+//
+//   // Triggered in the debug modal to close it
+//   $scope.closeDebug = function() {
+//     $scope.debugmodal.hide();
+//   };
+//
+//   // Open the login modal
+//   $scope.debug = function() {
+//     $scope.debugmodal.show();
+//   };
+//
+//   // Perform the debug toggle action when the user submits the debug form
+//   $scope.doDebug = function() {
+//     // $log.debug('Doing debug', $scope.debugData);
+//     $rootScope.debugStatusChange = true;
+//     // incrementing the app system time in debug mode uses
+//     // the delta from appStartTime, so we need to reset this...
+//     if ($scope.debugData.debugEnabled) {
+//       $rootScope.appStartTime = new Date();
+//       $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+//       dataServices.setDebugTime($scope.debugData.timeData);
+//     }
+//     dataServices.setDebug($scope.debugData.debugEnabled);
+//     $scope.closeDebug();
+//   };
+//
+//   //  var set in app.js
+//   $scope.devModeEnabled = $rootScope.devModeEnabled;
+//
+//
+// })  // end of appCtrl
 
 .controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup', '$cordovaNativeAudio', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
   function($scope, $rootScope, $log, $ionicPopup, $cordovaNativeAudio, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
