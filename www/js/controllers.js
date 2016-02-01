@@ -269,4 +269,83 @@ angular.module('havaschedule.controllers', [])
       return false;
     };
   }]
-);
+)
+
+.controller('PrefsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
+  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter) {
+    // ******************************************************************************
+    //  choose bellschedule
+    // ******************************************************************************
+
+    $ionicModal.fromTemplateUrl('templates/choosebell.html', {
+      scope:$scope
+    }).then(function(modal) {
+      $scope.chooseBellModal = modal;
+    });
+
+    // Triggered in the debug modal to close it
+    $scope.closeBellChooser = function() {
+      $scope.chooseBellModal.hide();
+    };
+
+    $scope.changeBellSelection = function(selection) {
+        $rootScope.chosenBellScheduleName = $scope.items[selection];
+        $rootScope.bellScheduleStatusChange = true;
+        $scope.closeBellChooser();
+    };
+
+    // Open the login modal
+    $scope.showBell = function() {
+      $scope.items = [];
+      var bells = dataServices.getBellSchedules('all');
+      for (var bellID in bells) {
+        $scope.items.push(bells[bellID].name);
+      }
+      $scope.chooseBellModal.show();
+    };
+
+    // ******************************************************************************
+    //  debug
+    // ******************************************************************************
+
+    // Form data for the debug modal
+    $scope.debugData = {
+      timeData: dataServices.getDebugTime(),
+      debugEnabled: dataServices.isDebug()
+    };
+
+    $ionicModal.fromTemplateUrl('templates/debug.html', {
+      scope:$scope
+    }).then(function(modal) {
+      $scope.debugmodal = modal;
+    });
+
+    // Triggered in the debug modal to close it
+    $scope.closeDebug = function() {
+      $scope.debugmodal.hide();
+    };
+
+    // Open the login modal
+    $scope.debug = function() {
+      $scope.debugmodal.show();
+    };
+
+    // Perform the debug toggle action when the user submits the debug form
+    $scope.doDebug = function() {
+      // $log.debug('Doing debug', $scope.debugData);
+      $rootScope.debugStatusChange = true;
+      // incrementing the app system time in debug mode uses
+      // the delta from appStartTime, so we need to reset this...
+      if ($scope.debugData.debugEnabled) {
+        $rootScope.appStartTime = new Date();
+        $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+        dataServices.setDebugTime($scope.debugData.timeData);
+      }
+      dataServices.setDebug($scope.debugData.debugEnabled);
+      $scope.closeDebug();
+    };
+
+    //  var set in app.js
+    $scope.devModeEnabled = $rootScope.devModeEnabled;
+  }
+]);

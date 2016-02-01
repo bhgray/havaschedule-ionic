@@ -1,0 +1,21 @@
+<ion-view view-title="tab-prefs">
+    <ion-content>
+      <ion-list>
+        <ion-item menu-close href="#/app/display">
+          Main View
+        </ion-item>
+        <ion-item menu-close ng-click="showBell()">
+          Choose BellSchedule
+        </ion-item>
+        <ion-item menu-close href="#">
+          Edit Roster (to come)
+        </ion-item>
+        <ion-item menu-close href="#">
+          Prefs (to come)
+        </ion-item>
+        <ion-item menu-close ng-show="devModeEnabled" ng-click="debug()">
+          Toggle Debug
+        </ion-item>
+
+      </ion-list>
+    </ion-content>

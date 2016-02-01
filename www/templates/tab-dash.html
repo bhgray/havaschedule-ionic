@@ -1,0 +1,46 @@
+<ion-view view-title="HavaSchedule">
+  <ion-content>
+    <div class="list card nowcard">
+      <div class="item item-divider dark" ng-click="updateUI()">Now  <span ng-class="{'debug': debug}" ng-show="debug">DEBUG MODE</span></div>
+      <a href="#" class="item">{{theWeekday}}, {{theDate}}</a>
+      <a href="#" class="item"><the-current-time></the-current-time></a>
+    </div>
+
+    <div class="list card passingcard" ng-show="passingTimeDiv">
+      <div class="item item-divider">Current Status:  Passing Time to <span class="minorstandout">{{thePeriod}}</span></div>
+      <a href="#" class="item">Next class: <span class="standout">{{theClass}}</span><span ng-show="roomSpecified">  in room {{theRoom}}</span></a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        {{theClass}} starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
+      </a>
+    </div>
+
+    <div class="list card schedulecard" ng-show="inClassDiv">
+      <div ng-click="showBell()" class="item item-divider">{{chosenBellScheduleName}} Bell Schedule</div>
+      <a href="#" class="item"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        Started <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer> ago (at {{periodStartString}})
+      </a>
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-clock"></i>
+        Ends in <counttimer date={{periodEndDateTimeString}}> &nbsp;</counttimer> (at {{periodEndString}})
+      </a>
+    </div>
+
+    <div class="list card timercard">
+      <div class="item item-divider">
+        Timers
+      </div>
+      <ion-list>
+        <ion-item ng-class="item-icon-left" ng-if="shouldShow(timer)" class="item-remove-animate" ng-repeat="timer in timers" item="timer" ng-click="activate(timer)">
+                <i class="icon ion-android-alarm-clock">  {{timer.description}}  </i>
+                <timer-display ng-if="timer.active"></timer-display>
+                <ion-option-button class="button-assertive" ng-click="edit(timer)">Edit</ion-option-button>
+        </ion-item>
+      </ion-list>
+
+    </div>
+
+  </ion-content>
+</ion-view>
