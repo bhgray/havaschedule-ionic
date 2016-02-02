@@ -119,29 +119,6 @@ angular.module('havaschedule', [
 
   $urlRouterProvider.otherwise('/tab/dash');
 
-//  to restore:  uncomment the lines below:
-
-  // .state('app', {
-  //   url: '/app',
-  //   abstract: true,
-  //   templateUrl: 'templates/menu.html',
-  //   controller: 'AppCtrl'
-  // })
-  //
-  // .state('app.display', {
-  //   url: '/display',
-  //   views: {
-  //     'menuContent': {
-  //       templateUrl: 'templates/display.html',
-  //       controller: 'DisplayCtrl'
-  //     }
-  //   }
-  // });
-  // if none of the above states are matched, use this as the fallback
-  // $urlRouterProvider.otherwise('/app/display');
-
-  // to restore:  uncomment lines above
-
   console.debug("config app.js");
 
 });

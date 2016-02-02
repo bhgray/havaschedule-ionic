@@ -1,7 +1,7 @@
 angular.module('havaschedule.controllers', [])
 
-.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup', '$cordovaNativeAudio', 'dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
-  function($scope, $rootScope, $log, $ionicPopup, $cordovaNativeAudio, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
+.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup',  '$ionicModal','dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
+  function($scope, $rootScope, $log, $ionicPopup, $ionicModal, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
 
     // ******************************************************************************
     //  handle background and resultTime
@@ -148,6 +148,37 @@ angular.module('havaschedule.controllers', [])
         return true;
       }
       return false;
+    };
+
+    // ******************************************************************************
+    //  choose bellschedule
+    // ******************************************************************************
+
+    $ionicModal.fromTemplateUrl('templates/choosebell.html', {
+      scope:$scope
+    }).then(function(modal) {
+      $scope.chooseBellModal = modal;
+    });
+
+    // Triggered in the debug modal to close it
+    $scope.closeBellChooser = function() {
+      $scope.chooseBellModal.hide();
+    };
+
+    $scope.changeBellSelection = function(selection) {
+        $rootScope.chosenBellScheduleName = $scope.items[selection];
+        $rootScope.bellScheduleStatusChange = true;
+        $scope.closeBellChooser();
+    };
+
+    // Open the login modal
+    $scope.showBell = function() {
+      $scope.items = [];
+      var bells = dataServices.getBellSchedules('all');
+      for (var bellID in bells) {
+        $scope.items.push(bells[bellID].name);
+      }
+      $scope.chooseBellModal.show();
     };
   }]
 )

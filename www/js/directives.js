@@ -122,58 +122,6 @@ angular.module('havaschedule.directives', [])
   }
 ])
 
-// .directive('stopwatch', ['$interval', '$log',  'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
-//   function($interval,  $log, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
-//
-//     return function(scope, element, attrs) {
-//       var stopTimer;
-//       var endTime;
-//
-//       // scope.$watch(attrs.date, function (newDateString) {
-//       //   endTime = new Date(newDateString).getTime();
-//       //   updateTime();
-//       // });
-//
-//       function timeDiff(future, present) {
-//         // pass along the difference in seconds.
-//         var result = Math.floor((future - present) / 1000);
-//         return result;
-//       }
-//
-//       function updateTime() {
-//         var d = dataServices.getCurrentTime();
-//         var present = d.getTime();
-//         var delta = timeDiff(endTime, present);
-//         var timeDiffString = timeCalcServices.countdownFormatString(delta);
-//         element.text(timeDiffString);
-//         if (delta === 0) {
-//           endTimer();
-//         }
-//       }
-//
-//       function endTimer() {
-//         var alertPopup = $ionicPopup.alert({
-//           title:'Timer Done',
-//           template: 'Done!'
-//         });
-//         alertPopup.then(function(res) {
-//           console.debug('alert cancelled');
-//         });
-//         $log.debug("timer ended!  beep!");
-//         $interval.cancel(stopTimer);
-//       }
-//
-//         stopTimer = $interval(updateTime, 1000);
-//         $log.debug("stopwatch started");
-//
-//       // listen on DOM destroy (removal) event, and cancel the next UI update
-//       // to prevent updating time after the DOM element was removed.
-//       element.on('$destroy', function() {
-//         $interval.cancel(stopTimer);
-//       });
-//     };
-// }])
-
 .directive('theCurrentTime', ['$interval',  '$log', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope',
   function($interval,  $log, dateFilter, dataServices, timeCalcServices, $rootScope) {
     // return the directive link function. (compile function not needed)

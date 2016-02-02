@@ -1,6 +1,6 @@
 angular.module('havaschedule.services', [])
 
-.factory('dataServices', function($rootScope) {
+.service('dataServices', function($rootScope) {
 
 	var getTimers = function() {
 		var timersList = [
@@ -158,7 +158,7 @@ angular.module('havaschedule.services', [])
 	};
 })
 
-.factory('dateTimeServices', function($filter, dataServices) {
+.service('dateTimeServices', function($filter, dataServices) {
 
 	var dayOfWeekString = function() {
 		var date = $filter('date')(dataServices.getCurrentTime(), 'EEE').toUpperCase();
@@ -183,7 +183,7 @@ angular.module('havaschedule.services', [])
 
 })
 
-.factory('timeCalcServices', function(dataServices, dateFilter) {
+.service('timeCalcServices', function(dataServices, dateFilter) {
 
 	var getBellScheduleWithDates = function(which) {
 		var bellschedule = dataServices.getBellSchedules(which);
