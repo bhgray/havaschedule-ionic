@@ -121,6 +121,7 @@ angular.module('havaschedule.services', [])
 
 	var setDebug = function(debug) {
 			$rootScope.debug = debug;
+			$rootScope.debugStatusChange = true;
 	};
 
 	var isDebug = function() {

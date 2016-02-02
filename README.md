@@ -139,3 +139,6 @@
 ## 2016-01-31-1507-SUN
   * http://gonehybrid.com/how-to-add-sound-effects-to-your-ionic-app-with-native-audio/
   * installed using ionic plugin add cordova-plugin-nativeaudio
+## 2016-02-02-1022-TUE
+  * 0022_localstorage using ngStorage
+  * new branch "display_redesign" to change the display a bit....
