@@ -142,3 +142,4 @@
 ## 2016-02-02-1022-TUE
   * 0022_localstorage using ngStorage
   * new branch "display_redesign" to change the display a bit....
+  * http://stackoverflow.com/questions/927358/how-do-you-undo-the-last-commit
