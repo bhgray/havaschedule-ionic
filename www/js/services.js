@@ -1,6 +1,6 @@
 angular.module('havaschedule.services', [])
 
-.factory('dataServices', function($rootScope) {
+.factory('dataServices', function($rootScope, $localStorage, $log) {
 
 	var getTimers = function() {
 		var timersList = [
@@ -342,4 +342,6 @@ angular.module('havaschedule.services', [])
 		isBeforeDates: isBeforeDates,
 		countdownFormatString: countdownFormatString
 	};
-});
+})
+
+;

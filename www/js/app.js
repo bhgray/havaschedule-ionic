@@ -5,7 +5,8 @@ angular.module('havaschedule', [
   'havaschedule.controllers',
   'havaschedule.services',
   'havaschedule.directives',
-  'ngCordova'
+  'ngCordova',
+  'ngStorage'
 ])
 
 .run(function($ionicPlatform, $rootScope, dateFilter) {
@@ -48,6 +49,13 @@ angular.module('havaschedule', [
 .config(['$logProvider', function($logProvider){
     $logProvider.debugEnabled(true);
 }])
+
+.config(['$localStorageProvider',
+    function ($localStorageProvider) {
+        $localStorageProvider.get('MyKey');
+        $localStorageProvider.set('MyKey', { k: 'value' });
+    }
+])
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
