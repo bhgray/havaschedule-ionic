@@ -3,6 +3,7 @@ angular.module('havaschedule.services', [])
 .factory('dataServices', function($rootScope, $localStorage, $log) {
 
 	var getTimers = function() {
+		var result;
 		var timersList = [
 			{description: "30 minutes", duration: 30, active:false, endTime:"", id:"1"},
 			{description: "10 minutes", duration: 10, active:false, endTime:"", id:"2"},
@@ -11,7 +12,14 @@ angular.module('havaschedule.services', [])
 			{description: "10 minutes before end", duration: -10, active:false, endTime:"", id:"5"},
 			{description: "2 minutes before end", duration: -2, active:false, endTime:"", id:"6"}
 		];
-		return timersList;
+		if ($localStorage.prefs.sampledata === true) {
+			result = timersList;
+		}
+		else {
+			result = $localStorage.userdata.timers;
+		}
+
+		return result;
 	};
 
 	/*
@@ -20,6 +28,7 @@ angular.module('havaschedule.services', [])
 	*/
 
 	var getBellSchedules = function(which) {
+		var result;
 		var bellschedules = [
 			{name: 'Regular',
 				periods: [
@@ -79,27 +88,35 @@ angular.module('havaschedule.services', [])
 					{name: 'Midterms',
 						periods: [
 							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 20},
-							{period: 1, name: 'Period 1', start: '08:13:00', end: '', duration: 90},
-							{period: 3, name: 'Period 3', start: '09:46:00', end: '', duration: 90},
-							{period: 4, name: 'Period 4', start: '11:19:00', end: '', duration: 33},
-							{period: 4, name: 'Period 5', start: '11:55:00', end: '', duration: 33},
+							{period: 8, name: 'Period 8', start: '08:13:00', end: '', duration: 90},
+							{period: 4, name: 'Period 4', start: '09:46:00', end: '', duration: 90},
+							{period: 3, name: 'Period 3', start: '11:19:00', end: '', duration: 33},
+							{period: 5, name: 'Period 5', start: '11:55:00', end: '', duration: 33},
 							{period: 6, name: 'Period 6', start: '12:31:00', end: '', duration: 33},
 							{period: 7, name: 'Period 7', start: '13:07:00', end: '', duration: 33},
-							{period: 8, name: 'Period 8', start: '13:43:00', end: '', duration: 33},
+							{period: 1, name: 'Period 1', start: '13:43:00', end: '', duration: 33},
 							{period: 2, name: 'Period 2', start: '14:19:00', end: '', duration: 33}
 						]}
 				];
+				if ($localStorage.prefs.sampledata === true) {
+					result = bellschedules;
+				}
+				else {
+					result = $localStorage.userdata.bellschedules;
+				}
+
 		if (which === 'all') {
-			return bellschedules;
+			return result;
 		} else {
 			var foundBellSchedule = null;
-			for (var bellID in bellschedules) {
+			for (var bellID in result) {
 				var bell = bellschedules[bellID];
 				if (bell.name === which) {
-					foundBellSchedule = bell;
+					return bell;
+
 				}
 			}
-		return foundBellSchedule;
+		return result;
 		}
 	};
 

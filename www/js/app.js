@@ -50,10 +50,10 @@ angular.module('havaschedule', [
     $logProvider.debugEnabled(true);
 }])
 
+// TODO:  this will be for persistent preferences....
 .config(['$localStorageProvider',
     function ($localStorageProvider) {
-        $localStorageProvider.get('MyKey');
-        $localStorageProvider.set('MyKey', { k: 'value' });
+        $localStorageProvider.set('prefs', { 'sampledata': true });
     }
 ])
 
