@@ -264,6 +264,13 @@ angular.module('havaschedule.controllers', [])
     //  var set in app.js
     $scope.devModeEnabled = $rootScope.devModeEnabled;
   }
+
+  // ******************************************************************************
+  //  reset sample data
+  // ******************************************************************************
+  
+
+
 ])
 
 .controller('RosterCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
