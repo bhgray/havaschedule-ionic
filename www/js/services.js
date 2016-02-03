@@ -1,18 +1,23 @@
 angular.module('havaschedule.services', [])
 
-.service('dataServices', function($rootScope) {
+.service('dataServices', function($rootScope, $localStorage) {
 
-	var getTimers = function() {
-		var timersList = [
-			{description: "30 minutes", duration: 30, active:false, endTime:"", id:"1"},
-			{description: "10 minutes", duration: 10, active:false, endTime:"", id:"2"},
-			{description: "1 minute", duration: 1, active:false, endTime:"", id:"3"},
-			{description: "20 minutes before end", duration: -20, active:false, endTime:"", id:"4"},
-			{description: "10 minutes before end", duration: -10, active:false, endTime:"", id:"5"},
-			{description: "2 minutes before end", duration: -2, active:false, endTime:"", id:"6"}
-		];
-		return timersList;
-	};
+		var getTimers = function() {
+			var timersList = [
+				{description: "30 minutes", duration: 30, active:false, endTime:"", id:"1"},
+				{description: "10 minutes", duration: 10, active:false, endTime:"", id:"2"},
+				{description: "1 minute", duration: 1, active:false, endTime:"", id:"3"},
+				{description: "20 minutes before end", duration: -20, active:false, endTime:"", id:"4"},
+				{description: "10 minutes before end", duration: -10, active:false, endTime:"", id:"5"},
+				{description: "2 minutes before end", duration: -2, active:false, endTime:"", id:"6"}
+			];
+
+			if ($localStorage.prefs.sampledata) {
+				return timersList;
+			} else {
+				return $localStorage.userdata.timers;
+			}
+		};
 
 	/*
 			bell schedules store times as HH:mm:ss strings with durations.
@@ -89,17 +94,25 @@ angular.module('havaschedule.services', [])
 							{period: 2, name: 'Period 2', start: '14:19:00', end: '', duration: 33}
 						]}
 				];
+
+				var result;
+				if ($localStorage.prefs.sampledata) {
+					result = bellschedules;
+				} else {
+					result = $localStorage.userdata.bellschedules;
+				}
+
+
 		if (which === 'all') {
-			return bellschedules;
+			return result;
 		} else {
 			var foundBellSchedule = null;
 			for (var bellID in bellschedules) {
 				var bell = bellschedules[bellID];
 				if (bell.name === which) {
-					foundBellSchedule = bell;
+					return bell;
 				}
 			}
-		return foundBellSchedule;
 		}
 	};
 
@@ -116,7 +129,13 @@ angular.module('havaschedule.services', [])
 			{period: 7, name: 'APCS', room: '220'},
 			{period: 8, name: 'Discrete Math', room: '220'}
 		];
-		return roster;
+		var result;
+		if ($localStorage.prefs.sampledata) {
+			result = roster;
+		} else {
+			result = $localStorage.userdata.roster;
+		}
+		return result;
 	};
 
 	var setDebug = function(debug) {
