@@ -9,7 +9,7 @@ angular.module('havaschedule', [
   'ngStorage'
 ])
 
-.run(function($ionicPlatform, $rootScope, dateFilter) {
+.run(function($ionicPlatform, $rootScope, dateFilter, dataServices, prefServices) {
   $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -20,6 +20,11 @@ angular.module('havaschedule', [
       StatusBar.styleDefault();
     }
   });
+  // check to see if the app has been initialized in a first run.
+  // if so, copy the sample data to userdata
+  if (prefServices.firstRun()) {
+    dataServices.appInit();
+  }
 
   $rootScope.appStartTime = new Date();
   $rootScope.debug = false;
@@ -53,7 +58,7 @@ angular.module('havaschedule', [
 // TODO:  this will be for persistent preferences....
 .config(['$localStorageProvider',
     function ($localStorageProvider) {
-        $localStorageProvider.set('prefs', { 'sampledata': true });
+        $localStorageProvider.set('prefs', { 'firstRun': true });
     }
 ])
 

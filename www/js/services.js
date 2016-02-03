@@ -1,8 +1,42 @@
 angular.module('havaschedule.services', [])
 
-.service('dataServices', function($rootScope, $localStorage) {
+.service('prefServices', function($localStorage) {
+	var firstRun = function() {
+		return $localStorage.prefs.firstRun;
+	};
 
-		var getTimers = function() {
+	var setFirstRun = function(which) {
+		$localStorage.prefs.firstRun = which;
+	};
+
+	return {
+		firstRun: firstRun,
+		setFirstRun: setFirstRun
+	};
+
+})
+
+.service('dataServices', function($rootScope, $localStorage, $log, prefServices) {
+
+	var appInit = function() {
+		$log.debug("appInit called on first run.");
+		resetUserData();
+		prefServices.setFirstRun(false);
+	};
+
+	var resetUserData = function() {
+		$log.debug("resetting user data");
+		$localStorage.userdata = {};
+		$localStorage.userdata.timers = getSampleTimers();
+		$localStorage.userdata.bellschedules = getSampleBellSchedules();
+		$localStorage.userdata.roster = getSampleRoster();
+	};
+
+	var getTimers = function() {
+		return $localStorage.userdata.timers;
+	};
+
+		var getSampleTimers = function() {
 			var timersList = [
 				{description: "30 minutes", duration: 30, active:false, endTime:"", id:"1"},
 				{description: "10 minutes", duration: 10, active:false, endTime:"", id:"2"},
@@ -11,11 +45,21 @@ angular.module('havaschedule.services', [])
 				{description: "10 minutes before end", duration: -10, active:false, endTime:"", id:"5"},
 				{description: "2 minutes before end", duration: -2, active:false, endTime:"", id:"6"}
 			];
+			return timersList;
+		};
 
-			if ($localStorage.prefs.sampledata) {
-				return timersList;
+		var getBellSchedules = function(which) {
+			var bellschedules = $localStorage.userdata.bellschedules;
+			if (which === 'all') {
+				return bellschedules;
 			} else {
-				return $localStorage.userdata.timers;
+				var foundBellSchedule = null;
+				for (var bellID in bellschedules) {
+					var bell = bellschedules[bellID];
+					if (bell.name === which) {
+						return bell;
+					}
+				}
 			}
 		};
 
@@ -24,7 +68,7 @@ angular.module('havaschedule.services', [])
 			when they are opened in the app, they are converted to Date() objects
 	*/
 
-	var getBellSchedules = function(which) {
+	var getSampleBellSchedules = function() {
 		var bellschedules = [
 			{name: 'Regular',
 				periods: [
@@ -95,29 +139,15 @@ angular.module('havaschedule.services', [])
 						]}
 				];
 
-				var result;
-				if ($localStorage.prefs.sampledata) {
-					result = bellschedules;
-				} else {
-					result = $localStorage.userdata.bellschedules;
-				}
+		return bellschedules;
 
-
-		if (which === 'all') {
-			return result;
-		} else {
-			var foundBellSchedule = null;
-			for (var bellID in bellschedules) {
-				var bell = bellschedules[bellID];
-				if (bell.name === which) {
-					return bell;
-				}
-			}
-		}
 	};
 
-
 	var getRoster = function() {
+		return $localStorage.userdata.roster;
+	};
+
+	var getSampleRoster = function() {
 		var roster = [
 			{period: 0, name: 'Advisory 205', room: '220'},
 			{period: 1, name: 'Prep', room: ''},
@@ -129,13 +159,7 @@ angular.module('havaschedule.services', [])
 			{period: 7, name: 'APCS', room: '220'},
 			{period: 8, name: 'Discrete Math', room: '220'}
 		];
-		var result;
-		if ($localStorage.prefs.sampledata) {
-			result = roster;
-		} else {
-			result = $localStorage.userdata.roster;
-		}
-		return result;
+		return roster;
 	};
 
 	var setDebug = function(debug) {
@@ -173,7 +197,9 @@ angular.module('havaschedule.services', [])
 		isDebug: isDebug,
 		setDebug: setDebug,
 		getDebugTime: getDebugTime,
-		setDebugTime: setDebugTime
+		setDebugTime: setDebugTime,
+		appInit: appInit,
+		resetUserData: resetUserData
 	};
 })
 
@@ -218,7 +244,7 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getTimeNotificationList = function(which) {
-		var bell = getBellScheduleWithDates(which);
+		var bell = dataServices.getBellSchedules(which);
 		var times = [];
 		for (var periodID in bell.periods) {
 			var period = bell.periods[periodID];
@@ -323,7 +349,7 @@ angular.module('havaschedule.services', [])
 		for (var courseID in roster) {
 			var rosteredPeriodID = roster[courseID].period;
 			if (rosteredPeriodID === periodNumber) {
-				foundClass = roster[courseID];
+				return roster[courseID];
 			}
 		}
 		return foundClass;

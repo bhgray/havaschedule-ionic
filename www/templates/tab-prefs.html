@@ -11,9 +11,11 @@
         <ion-item ng-show="devModeEnabled" ng-click="debug()">
           Toggle Debug
         </ion-item>
-        <ion-item ng-click="resetUserData()">
-          Reset Sample Data
-        </ion-item>
-      </ion-list>
-    </div>
-    </ion-content>
+      <ion-item class="item" ng-click="sampleDataOverwrite()">
+        <button class="button button-full button-dark">
+          Reset Data to Sample Data
+        </button>
+      </ion-item>
+    </ion-list>
+  </div>
+  </ion-content>

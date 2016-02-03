@@ -183,11 +183,12 @@ angular.module('havaschedule.controllers', [])
   }]
 )
 
-.controller('PrefsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
-  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter) {
+.controller('PrefsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter', '$localStorage','$ionicPopup',
+  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter, $localStorage, $ionicPopup) {
     // ******************************************************************************
     //  choose bellschedule
     // ******************************************************************************
+
 
     $ionicModal.fromTemplateUrl('templates/choosebell.html', {
       scope:$scope
@@ -263,15 +264,30 @@ angular.module('havaschedule.controllers', [])
 
     //  var set in app.js
     $scope.devModeEnabled = $rootScope.devModeEnabled;
-  }
 
   // ******************************************************************************
-  //  reset sample data
+  //  reset sample data toggle
   // ******************************************************************************
-  
+  $scope.storage = $localStorage;
 
-
-])
+  $scope.sampleDataOverwrite = function() {
+    var confirmPopup = $ionicPopup.confirm({
+      title:'Warning',
+      template: 'This will reset your data to the sample data. This is not reversible. Do you want to proceed?'
+    });
+    confirmPopup.then(function(res) {
+      if (res) {
+        dataServices.resetUserData();
+      } else {
+        console.debug('data overwrite cancelled');
+        var alertPopup = $ionicPopup.alert({
+          title: 'Cancelled',
+          template:  'Your data has not been changed.'
+        });
+      }
+    });
+  };
+}])
 
 .controller('RosterCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',
   function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter) {
