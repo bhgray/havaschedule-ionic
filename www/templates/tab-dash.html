@@ -2,30 +2,30 @@
   <ion-content>
     <div class="list card nowcard">
       <div class="item item-divider dark" ng-click="updateUI()">{{theWeekday}}, {{theDate}}</div>
-      <a href="#" class="item"><the-current-time></the-current-time></a>
-      <div ng-click="showBell()" ng-show="inClassDiv" class="item">{{chosenBellScheduleName}} Bell Schedule</div>
-      <a href="#" class="item" ng-click="toggleDebug()" ng-show="debug">  <span ng-class="{'debug': debug}"> DEBUG MODE</span></a>
+      <div class="item"><the-current-time></the-current-time></div>
+      <div class="item" ng-click="showBell()" ng-show="inClassDiv">{{chosenBellScheduleName}} Bell Schedule</div>
+      <div class="item" ng-click="toggleDebug()" ng-show="debug">  <span ng-class="{'debug': debug}"> DEBUG MODE</span></div>
     </div>
 
     <div class="list card passingcard" ng-show="passingTimeDiv">
       <div class="item item-divider">Current Status:  Passing Time to <span class="minorstandout">{{thePeriod}}</span></div>
-      <a href="#" class="item">Next class: <span class="standout">{{theClass}}</span><span ng-show="roomSpecified">  in room {{theRoom}}</span></a>
-      <a href="#" class="item item-icon-left">
+      <div class="item">Next class: <span class="standout">{{theClass}}</span><span ng-show="roomSpecified">  in room {{theRoom}}</span></div>
+      <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
         {{theClass}} starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
-      </a>
+      </div>
     </div>
 
     <div class="list card schedulecard" ng-show="inClassDiv">
-      <a href="#" class="item item-divider"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></a>
-      <a href="#" class="item item-icon-left">
+      <div class="item item-divider"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></div>
+      <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
         Started <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer> ago (at {{periodStartString}})
-      </a>
-      <a href="#" class="item item-icon-left">
+      </div>
+      <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
         Ends in <counttimer date={{periodEndDateTimeString}}> &nbsp;</counttimer> (at {{periodEndString}})
-      </a>
+      </div>
     </div>
 
     <div class="list card timercard">

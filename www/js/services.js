@@ -84,14 +84,14 @@ angular.module('havaschedule.services', [])
 					{name: 'Midterms',
 						periods: [
 							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 20},
-							{period: 1, name: 'Period 1', start: '08:13:00', end: '', duration: 90},
-							{period: 3, name: 'Period 3', start: '09:46:00', end: '', duration: 90},
-							{period: 4, name: 'Period 4', start: '11:19:00', end: '', duration: 33},
-							{period: 4, name: 'Period 5', start: '11:55:00', end: '', duration: 33},
+							{period: 2, name: 'Period 2', start: '08:13:00', end: '', duration: 90},
+							{period: 5, name: 'Period 5', start: '09:46:00', end: '', duration: 90},
+							{period: 3, name: 'Period 3', start: '11:19:00', end: '', duration: 33},
+							{period: 4, name: 'Period 4', start: '11:55:00', end: '', duration: 33},
 							{period: 6, name: 'Period 6', start: '12:31:00', end: '', duration: 33},
 							{period: 7, name: 'Period 7', start: '13:07:00', end: '', duration: 33},
 							{period: 8, name: 'Period 8', start: '13:43:00', end: '', duration: 33},
-							{period: 2, name: 'Period 2', start: '14:19:00', end: '', duration: 33}
+							{period: 1, name: 'Period 1', start: '14:19:00', end: '', duration: 33}
 						]}
 				];
 
