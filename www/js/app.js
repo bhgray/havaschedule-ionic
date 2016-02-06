@@ -22,7 +22,11 @@ angular.module('havaschedule', [
   });
   // check to see if the app has been initialized in a first run.
   // if so, copy the sample data to userdata
-  if (prefServices.firstRun()) {
+  // if (prefServices.firstRun()) {
+  //   dataServices.appInit();
+  // }
+// do this everytime for dev purposes
+  if (true) {
     dataServices.appInit();
   }
 
@@ -45,20 +49,21 @@ angular.module('havaschedule', [
 })
 
 // see:  http://stackoverflow.com/questions/27874855/how-to-place-ionic-tabs-at-the-bottom-of-the-screen
-.config(['$ionicConfigProvider', function($ionicConfigProvider) {
-
+.config(['$ionicConfigProvider', function($ionicConfigProvider,$log) {
+    console.debug('app.js config $ionicConfigProvider');
     $ionicConfigProvider.tabs.position('top'); // other values: bottom
-
 }])
 
 .config(['$logProvider', function($logProvider){
+    console.debug('app.js config $logProvider');
     $logProvider.debugEnabled(true);
 }])
 
 // TODO:  this will be for persistent preferences....
 .config(['$localStorageProvider',
     function ($localStorageProvider) {
-        $localStorageProvider.set('prefs', { 'firstRun': true });
+      console.debug('app.js config $localStorageProvider');
+
     }
 ])
 

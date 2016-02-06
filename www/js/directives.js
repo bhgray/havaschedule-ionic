@@ -159,7 +159,7 @@ angular.module('havaschedule.directives', [])
           $rootScope.timeNotificationList = undefined;
         }
         if ($rootScope.timeNotificationList === undefined) {
-          $rootScope.timeNotificationList = timeCalcServices.getTimeNotificationList($rootScope.chosenBellScheduleName);
+          $rootScope.timeNotificationList = timeCalcServices.getTimeNotificationList(dataServices.getSelectedBellWithDates());
         }
         list = $rootScope.timeNotificationList;
         if (updateRequired) {

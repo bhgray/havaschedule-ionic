@@ -3,7 +3,7 @@
     <div class="list card nowcard">
       <div class="item item-divider dark" ng-click="updateUI()">{{theWeekday}}, {{theDate}}</div>
       <div class="item"><the-current-time></the-current-time></div>
-      <div class="item" ng-click="showBell()" ng-show="inClassDiv">{{chosenBellScheduleName}} Bell Schedule</div>
+      <div class="item" ng-click="showBell()" ng-show="inClassDiv">{{selectedBellScheduleName}} Bell Schedule</div>
       <div class="item" ng-click="toggleDebug()" ng-show="debug">  <span ng-class="{'debug': debug}"> DEBUG MODE</span></div>
     </div>
 

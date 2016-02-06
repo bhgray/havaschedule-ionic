@@ -1,6 +1,25 @@
 angular.module('havaschedule.services', [])
 
-.service('prefServices', function($localStorage) {
+.service('prefServices', function($localStorage, $rootScope) {
+
+
+	var setDebug = function(debug) {
+			$rootScope.debug = debug;
+			$rootScope.debugStatusChange = true;
+	};
+
+	var isDebug = function() {
+		return $rootScope.debug;
+	};
+
+	var setDebugTime = function(time) {
+			$rootScope.debugTime = time;
+	};
+
+	var getDebugTime = function() {
+		return $rootScope.debugTime;
+	};
+
 	var firstRun = function() {
 		return $localStorage.prefs.firstRun;
 	};
@@ -11,17 +30,21 @@ angular.module('havaschedule.services', [])
 
 	return {
 		firstRun: firstRun,
-		setFirstRun: setFirstRun
+		setFirstRun: setFirstRun,
+		isDebug: isDebug,
+		setDebug: setDebug,
+		getDebugTime: getDebugTime,
+		setDebugTime: setDebugTime
 	};
-
 })
 
-.service('dataServices', function($rootScope, $localStorage, $log, prefServices) {
+
+.service('dataServices', function($rootScope, $localStorage, $log, prefServices, timeCalcServices) {
 
 	var appInit = function() {
 		$log.debug("appInit called on first run.");
 		resetUserData();
-		prefServices.setFirstRun(false);
+		// prefServices.setFirstRun(false);
 	};
 
 	var resetUserData = function() {
@@ -30,7 +53,32 @@ angular.module('havaschedule.services', [])
 		$localStorage.userdata.timers = getSampleTimers();
 		$localStorage.userdata.bellschedules = getSampleBellSchedules();
 		$localStorage.userdata.roster = getSampleRoster();
+		$localStorage.prefs.selectedBellScheduleName = undefined;
+		$localStorage.prefs.chosenBellWithDates = undefined;
 	};
+
+	var getSelectedBellScheduleName = function() {
+		if ($localStorage.prefs.selectedBellScheduleName === undefined) {
+			setSelectedBellScheduleName("Regular");
+		}
+		return $localStorage.prefs.selectedBellScheduleName;
+	};
+
+	var setSelectedBellScheduleName = function(which) {
+		if (which !== $localStorage.prefs.selectedBellScheduleName) {
+			$rootScope.bellScheduleStatusChange = true;
+			$localStorage.prefs.selectedBellScheduleName = which;
+			$localStorage.prefs.selectedBellWithDates = undefined;
+		}
+	};
+
+	var getSelectedBellWithDates = function() {
+		return $localStorage.prefs.selectedBellWithDates;
+	};
+
+	var setSelectedBellWithDates = function(bellWithDates) {
+			$localStorage.prefs.selectedBellWithDates = bellWithDates;
+		};
 
 	var getTimers = function() {
 		return $localStorage.userdata.timers;
@@ -48,7 +96,7 @@ angular.module('havaschedule.services', [])
 			return timersList;
 		};
 
-		var getBellSchedules = function(which) {
+		var getBellSchedules = function(which, withDates) {
 			var bellschedules = $localStorage.userdata.bellschedules;
 			if (which === 'all') {
 				return bellschedules;
@@ -57,7 +105,11 @@ angular.module('havaschedule.services', [])
 				for (var bellID in bellschedules) {
 					var bell = bellschedules[bellID];
 					if (bell.name === which) {
-						return bell;
+						if (withDates) {
+							return calcBellScheduleDates(bell);
+						} else {
+							return bell;
+						}
 					}
 				}
 			}
@@ -162,31 +214,34 @@ angular.module('havaschedule.services', [])
 		return roster;
 	};
 
-	var setDebug = function(debug) {
-			$rootScope.debug = debug;
-			$rootScope.debugStatusChange = true;
-	};
-
-	var isDebug = function() {
-		return $rootScope.debug;
-	};
-
-	var setDebugTime = function(time) {
-			$rootScope.debugTime = time;
-	};
-
-	var getDebugTime = function() {
-		return $rootScope.debugTime;
-	};
 
 	var getCurrentTime = function() {
 		var result = new Date();
-		var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
-		if (isDebug())
+		if (prefServices.isDebug())
 		{
-			result = new Date(getDebugTime().getTime() + elapsed);
+			var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
+			result = new Date(prefServices.getDebugTime().getTime() + elapsed);
 		}
 		return result;
+	};
+
+
+	/*
+		issue:  if the bellschedule has already been calculated with dates,
+		then
+	*/
+	var calcBellScheduleDates = function(bellschedule) {
+		var periodList = bellschedule.periods;
+		for (var periodID in periodList) {
+			var p = periodList[periodID];
+
+			// on first call, no dates in the period object
+			if (!(p.start instanceof Date)) {
+				p.start = timeCalcServices.getTimeFromString(p.start, getCurrentTime());
+			}
+			p.end = timeCalcServices.addToTimeString(p.start, p.duration, true, getCurrentTime());
+		}
+		return bellschedule;
 	};
 
 	return {
@@ -194,10 +249,9 @@ angular.module('havaschedule.services', [])
 		getRoster: getRoster,
 		getTimers: getTimers,
 		getCurrentTime: getCurrentTime,
-		isDebug: isDebug,
-		setDebug: setDebug,
-		getDebugTime: getDebugTime,
-		setDebugTime: setDebugTime,
+		getSelectedBellScheduleName: getSelectedBellScheduleName,
+		setSelectedBellWithDates: setSelectedBellWithDates,
+		getSelectedBellWithDates: getSelectedBellWithDates,
 		appInit: appInit,
 		resetUserData: resetUserData
 	};
@@ -228,23 +282,11 @@ angular.module('havaschedule.services', [])
 
 })
 
-.service('timeCalcServices', function(dataServices, dateFilter) {
+.service('timeCalcServices', function(dateFilter, $log) {
 
-	var getBellScheduleWithDates = function(which) {
-		var bellschedule = dataServices.getBellSchedules(which);
-		// bellschedule[0]
-		var periodList = bellschedule.periods;
-		for (var periodID in periodList) {
-			var p = periodList[periodID];
-			var endTimeString = addToTimeString(p.start, p.duration);
-			p.start = getTimeFromString(p.start);
-			p.end = getTimeFromString(endTimeString);
-		}
-		return bellschedule;
-	};
 
-	var getTimeNotificationList = function(which) {
-		var bell = dataServices.getBellSchedules(which);
+
+	var getTimeNotificationList = function(bell) {
 		var times = [];
 		for (var periodID in bell.periods) {
 			var period = bell.periods[periodID];
@@ -271,28 +313,27 @@ angular.module('havaschedule.services', [])
 			converts a string in the form HH:mm to a
 			javascript Date() object
 	*/
-	var getTimeFromString = function(timeString) {
+	var getTimeFromString = function(timeString, currentTime) {
 		// $log.debug('getTimeFromString(' + timeString +')');
 		var timeStrings = timeString.split(':');
-		var tDate = dataServices.getCurrentTime();
-		tDate.setHours(timeStrings[0]);
-		tDate.setMinutes(timeStrings[1]);
-		tDate.setSeconds(timeStrings[2]);
-		return tDate;
+		currentTime.setHours(timeStrings[0]);
+		currentTime.setMinutes(timeStrings[1]);
+		currentTime.setSeconds(timeStrings[2]);
+		return currentTime;
 	};
 
 	/*
 		adds a number of minutes to a time,
-		specified as a HH:mm string.
+		specified as a HH:mm string OR as a Date object.
 
 		returnDate = TRUE returns a Date() object,
 		otherwise return a string in HH:mm:ss format.
 	*/
-	var addToTimeString = function(timeString, minutes, returnDate) {
-		// $log.debug('addToTimeString(' + timeString + ', ' + minutes + ')');
-		var theTime = getTimeFromString(timeString);
+	var addToTimeString = function(theTime, minutes, returnDate, currentTime) {
+		if (!(theTime instanceof Date)) {
+			theTime = getTimeFromString(theTime, currentTime);
+		}
 		var resultTime = new Date(theTime.getTime() + minutes * 60000);
-		// $log.debug('addToTimeString result ->' + resultTime);
 		if (returnDate) {
 			return resultTime;
 		} else {
@@ -308,8 +349,8 @@ angular.module('havaschedule.services', [])
 		Returns an object consisting of
 		{status:  'some status message', period: the array representing the appropriate period}
 	*/
-	var calcBellUsingDates = function(bellschedule) {
-		var timeNow = dataServices.getCurrentTime();
+	var calcBellUsingDates = function(bellschedule, timeNow) {
+		$log.debug('calcBellUsingDates:  bell -> ' + bellschedule + '; timeNow -> ' + timeNow);
 		// gets the array of periods from the bellschedule object
 		var periods = bellschedule.periods;
 		var foundPeriod = {status: 'not during school hours', period: null};
@@ -381,7 +422,6 @@ angular.module('havaschedule.services', [])
 	return {
 		getTimeNotificationList: getTimeNotificationList,
 		addToTimeString: addToTimeString,
-		getBellScheduleWithDates: getBellScheduleWithDates,
 		calcBellUsingDates: calcBellUsingDates,
 		getTimeFromString: getTimeFromString,
 		getRosteredClass: getRosteredClass,

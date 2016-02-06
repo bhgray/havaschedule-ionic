@@ -1,7 +1,7 @@
 angular.module('havaschedule.controllers', [])
 
-.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup',  '$ionicModal','dateTimeServices', 'timeCalcServices', 'dataServices', 'dateFilter', '$cordovaLocalNotification', '$compile',
-  function($scope, $rootScope, $log, $ionicPopup, $ionicModal, dateTimeServices, timeCalcServices, dataServices, dateFilter, $cordovaLocalNotification, $compile) {
+.controller('DisplayCtrl', ['$scope', '$rootScope', '$log', '$ionicPopup',  '$ionicModal','dateTimeServices', 'timeCalcServices', 'dataServices', 'prefServices', 'dateFilter', '$cordovaLocalNotification',
+  function($scope, $rootScope, $log, $ionicPopup, $ionicModal, dateTimeServices, timeCalcServices, dataServices, prefServices, dateFilter, $cordovaLocalNotification) {
 
     // ******************************************************************************
     //  handle background and resultTime
@@ -9,6 +9,7 @@ angular.module('havaschedule.controllers', [])
     // ******************************************************************************
 
     $scope.$on('$ionicView.enter', function($cordovaNativeAudio, $localStorage) {
+        $log.debug('DisplayCtrl -> $ionicView.enter');
         $scope.updateDateUI();
         $scope.updatePeriodUI();
         $scope.updateTimerUI();
@@ -16,28 +17,31 @@ angular.module('havaschedule.controllers', [])
     });
 
     // this only happens when it's instantiated....
-    $scope.currentDateTimeWithDebug = dataServices.getCurrentTime(dataServices.isDebug());
+    $scope.currentDateTimeWithDebug = dataServices.getCurrentTime();
 
     $scope.toggleDebug = function() {
-      $log.debug("toggleDebug");
+      $log.debug("DisplayCtrl -> toggleDebug");
       dataServices.setDebug(!dataServices.isDebug());
     };
 
 
     $scope.updateUI = function() {
-      $log.debug('updateUI');
+      $log.debug('DisplayCtrl -> updateUI');
       $scope.updateDateUI();
       $scope.updatePeriodUI();
     };
 
     $scope.updateTimerUI = function() {
+      $log.debug('DisplayCtrl -> updateTimerUI');
       $scope.timers = dataServices.getTimers();
     };
 
     $scope.updateDateUI = function() {
-      $scope.theDate = dateTimeServices.dateString($scope.currentDateTimeWithDebug);
-      $scope.theWeekday = dateTimeServices.dayOfWeekString($scope.currentDateTimeWithDebug);
-      $scope.debug = dataServices.isDebug();
+      $log.debug('DisplayCtrl -> updateDateUI');
+      // theDate and theWeekday used in tab-dash.html
+      $scope.theDate = dateTimeServices.dateString();
+      $scope.theWeekday = dateTimeServices.dayOfWeekString();
+      $scope.debug = prefServices.isDebug();
     };
 
     $scope.updatePeriodUI = function() {
@@ -45,14 +49,25 @@ angular.module('havaschedule.controllers', [])
       bellschedule is a two-element array.
       Element 1:  an array of configuration details
       Element 2:  an array of periods
+
+      current bellschedule with dates is cached in $scope.bellschedule.
+      Only update this is needed.
       */
 
-      // var bellschedule = dataServices.getBellSchedules();
-      var bellschedule = timeCalcServices.getBellScheduleWithDates($rootScope.chosenBellScheduleName);
+      $log.debug('DisplayCtrl -> updatePeriodUI');
+      if ($rootScope.bellScheduleStatusChange || $scope.bellschedule === undefined) {
+        var withDates = true;
+        $rootScope.bellScheduleStatusChange = false;
+        var name = dataServices.getSelectedBellScheduleName();
+        dataServices.setSelectedBellWithDates(dataServices.getBellSchedules(name, withDates));
+      }
+
+      $scope.selectedBellScheduleName = dataServices.getSelectedBellScheduleName();
+      $scope.bellschedule = dataServices.getSelectedBellWithDates();
+
       var roster = dataServices.getRoster();
-      $scope.activePeriod = timeCalcServices.calcBellUsingDates(bellschedule);
+      $scope.activePeriod = timeCalcServices.calcBellUsingDates($scope.bellschedule, dataServices.getCurrentTime());
       var theRosteredClass;
-      $scope.chosenBellScheduleName = $rootScope.chosenBellScheduleName;
       // $log.debug('updatePeriodUI found:  ' + activePeriod.status);
 
       if ($scope.activePeriod.status == 'not during school hours') {        // not during school hours
@@ -183,8 +198,8 @@ angular.module('havaschedule.controllers', [])
   }]
 )
 
-.controller('PrefsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter', '$localStorage','$ionicPopup',
-  function($scope, $rootScope, $log, $ionicModal, dataServices, dateFilter, $localStorage, $ionicPopup) {
+.controller('PrefsCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'prefServices', 'dateFilter', '$localStorage','$ionicPopup',
+  function($scope, $rootScope, $log, $ionicModal, dataServices, prefServices, dateFilter, $localStorage, $ionicPopup) {
     // ******************************************************************************
     //  choose bellschedule
     // ******************************************************************************
@@ -241,8 +256,8 @@ angular.module('havaschedule.controllers', [])
     // Open the login modal
     $scope.debug = function() {
       $scope.debugData = {
-        timeData: dataServices.getDebugTime(),
-        debugEnabled: dataServices.isDebug()
+        timeData: prefServices.getDebugTime(),
+        debugEnabled: prefServices.isDebug()
       };
       $scope.debugmodal.show();
     };
@@ -256,9 +271,9 @@ angular.module('havaschedule.controllers', [])
       if ($scope.debugData.debugEnabled) {
         $rootScope.appStartTime = new Date();
         $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
-        dataServices.setDebugTime($scope.debugData.timeData);
+        prefServices.setDebugTime($scope.debugData.timeData);
       }
-      dataServices.setDebug($scope.debugData.debugEnabled);
+      prefServices.setDebug($scope.debugData.debugEnabled);
       $scope.closeDebug();
     };
 
