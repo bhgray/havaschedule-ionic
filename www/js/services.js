@@ -250,6 +250,7 @@ angular.module('havaschedule.services', [])
 		getTimers: getTimers,
 		getCurrentTime: getCurrentTime,
 		getSelectedBellScheduleName: getSelectedBellScheduleName,
+		setSelectedBellScheduleName: setSelectedBellScheduleName,
 		setSelectedBellWithDates: setSelectedBellWithDates,
 		getSelectedBellWithDates: getSelectedBellWithDates,
 		appInit: appInit,

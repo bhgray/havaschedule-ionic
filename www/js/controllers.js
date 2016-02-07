@@ -21,7 +21,7 @@ angular.module('havaschedule.controllers', [])
 
     $scope.toggleDebug = function() {
       $log.debug("DisplayCtrl -> toggleDebug");
-      dataServices.setDebug(!dataServices.isDebug());
+      prefServices.setDebug(!prefServices.isDebug());
     };
 
 
@@ -217,7 +217,8 @@ angular.module('havaschedule.controllers', [])
     };
 
     $scope.changeBellSelection = function(selection) {
-        $rootScope.chosenBellScheduleName = $scope.items[selection];
+        // $rootScope.chosenBellScheduleName = $scope.items[selection];
+        dataServices.setSelectedBellScheduleName($scope.items[selection]);
         $rootScope.bellScheduleStatusChange = true;
         $scope.closeBellChooser();
     };
