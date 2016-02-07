@@ -8,7 +8,7 @@ angular.module('havaschedule.controllers', [])
     //  see:  https://cordova.apache.org/docs/en/latest/cordova/events/events.resume.html
     // ******************************************************************************
 
-    $scope.$on('$ionicView.enter', function($cordovaNativeAudio, $localStorage) {
+    $scope.$on('$ionicView.beforeEnter', function($cordovaNativeAudio, $localStorage) {
         $log.debug('DisplayCtrl -> $ionicView.enter');
         $scope.updateDateUI();
         $scope.updatePeriodUI();
@@ -18,25 +18,43 @@ angular.module('havaschedule.controllers', [])
 
     // this only happens when it's instantiated....
     $scope.currentDateTimeWithDebug = dataServices.getCurrentTime();
+    $scope.prefs = prefServices.getAllPrefs();
 
     $scope.toggleDebug = function() {
       $log.debug("DisplayCtrl -> toggleDebug");
       prefServices.setDebug(!prefServices.isDebug());
     };
 
+    $scope.calculateDateTimeFormats = function() {
+      // SET THE DATE AND TIME FORMATS FOR THE DISPLAYS
+      $scope.timeFormat = prefServices.getPref("timeFormat");
+      $scope.dateTimeFormat = "MMM dd, yyyy " + $scope.timeFormat;
+      $scope.timeFormatNoSeconds = undefined;
+      if ($scope.timeFormat === "HH:mm:ss") {
+        // with 24 hour time format, the substring is only 3 in length to take off the ':ss'
+        $scope.timeFormatNoSeconds = $scope.timeFormat.substring(0, $scope.timeFormat.length - 3);
+      } else {
+        // with 12 hour time format, the substring is 5 in length to take off the ':ss'
+        $scope.timeFormatNoSeconds = $scope.timeFormat.substring(0, $scope.timeFormat.length - 5);
+      }
+      // $log.debug('timeFormatNoSeconds = ' + timeFormatNoSeconds);
+    };
 
     $scope.updateUI = function() {
       $log.debug('DisplayCtrl -> updateUI');
+      $scope.calculateDateTimeFormats();
       $scope.updateDateUI();
       $scope.updatePeriodUI();
     };
 
     $scope.updateTimerUI = function() {
       $log.debug('DisplayCtrl -> updateTimerUI');
+      $scope.calculateDateTimeFormats();
       $scope.timers = dataServices.getTimers();
     };
 
     $scope.updateDateUI = function() {
+      $scope.calculateDateTimeFormats();
       $log.debug('DisplayCtrl -> updateDateUI');
       // theDate and theWeekday used in tab-dash.html
       $scope.theDate = dateTimeServices.dateString();
@@ -45,6 +63,7 @@ angular.module('havaschedule.controllers', [])
     };
 
     $scope.updatePeriodUI = function() {
+      $scope.calculateDateTimeFormats();
       /*
       bellschedule is a two-element array.
       Element 1:  an array of configuration details
@@ -70,6 +89,8 @@ angular.module('havaschedule.controllers', [])
       var theRosteredClass;
       // $log.debug('updatePeriodUI found:  ' + activePeriod.status);
 
+
+
       if ($scope.activePeriod.status == 'not during school hours') {        // not during school hours
         $log.debug('activating non school hours mode');
         $scope.inClassDiv = false;
@@ -89,7 +110,7 @@ angular.module('havaschedule.controllers', [])
         if ($scope.theRoom.trim().length < 2) {
           $scope.roomSpecified = false;
         }
-        $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
+        $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, $scope.dateTimeFormat);
         $scope.periodStartString = $scope.activePeriod.period.start;
 
         if ($scope.activePeriod.status == 'passing time') {   // passing time.  must find a way to do constants
@@ -104,12 +125,12 @@ angular.module('havaschedule.controllers', [])
           $scope.passingTimeDiv = false;
           $scope.classTimers = true;
           // used in display.html directly
-          $scope.periodStartString = dateFilter($scope.activePeriod.period.start, "HH:mm");
-          $scope.periodEndString = dateFilter($scope.activePeriod.period.end, "HH:mm");
+          $scope.periodStartString = dateFilter($scope.activePeriod.period.start, $scope.timeFormatNoSeconds);
+          $scope.periodEndString = dateFilter($scope.activePeriod.period.end, $scope.timeFormatNoSeconds);
 
           // used in display.html to initialize the counttimer elements (see directives.js)
-          $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, "MMM dd, yyyy HH:mm:ss");
-          $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, "MMM dd, yyyy HH:mm:ss");
+          $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, $scope.dateTimeFormat);
+          $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, $scope.dateTimeFormat);
         }
       }
     };
@@ -130,14 +151,14 @@ angular.module('havaschedule.controllers', [])
         } else {
           timerEnd = nowTime.setMinutes(nowTime.getMinutes() + timer.duration);
         }
-        timer.endTime = dateFilter(timerEnd, "MMM dd, yyyy HH:mm:ss");
+        timer.endTime = dateFilter(timerEnd, $scope.dateTimeFormat);
         $cordovaLocalNotification.schedule({
             id: timer.id,
             at: timerEnd,
-            text: "Timer Ended at " + dateFilter(timerEnd, 'HH:mm:ss'),
+            text: "Timer Ended at " + dateFilter(timerEnd, $scope.timeFormat),
             sound:  'file://sounds/bell.wav'
         }).then(function() {
-          $log.debug("notification " + timer.id + " set for " + dateFilter(timerEnd, "HH:mm:ss"));
+          $log.debug("notification " + timer.id + " set for " + dateFilter(timerEnd, $scope.timeFormat));
         });
 
         $log.debug(timer);
@@ -223,7 +244,7 @@ angular.module('havaschedule.controllers', [])
         $scope.closeBellChooser();
     };
 
-    // Open the login modal
+    // Open the bell chooser modal
     $scope.showBell = function() {
       $scope.items = [];
       var bells = dataServices.getBellSchedules('all');
@@ -303,6 +324,26 @@ angular.module('havaschedule.controllers', [])
       }
     });
   };
+
+  $scope.prefs = prefServices.getAllPrefs();
+  if ($scope.prefs.timeFormat === "HH:mm:ss") {
+    $scope.euroHour = true;
+  } else {
+    $scope.euroHour = false;
+  }
+
+  $scope.timeFormatChange = function() {
+    $scope.euroHour = !$scope.euroHour;
+    if ($scope.euroHour) {
+      $scope.prefs.timeFormat = "HH:mm:ss";
+      $log.debug("24-Hour Time Format Selected  " + prefServices.getPref("timeFormat"));
+    } else {
+      $scope.prefs.timeFormat = "h:mm:ss a";
+      $log.debug("12-Hour Time Format Selected:  " + prefServices.getPref("timeFormat"));
+    }
+  };
+
+
 }])
 
 .controller('RosterCtrl', ['$scope', '$rootScope', '$log', '$ionicModal', 'dataServices', 'dateFilter',

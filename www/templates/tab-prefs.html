@@ -11,11 +11,14 @@
         <ion-item ng-show="devModeEnabled" ng-click="debug()">
           Toggle Debug
         </ion-item>
-      <ion-item class="item" ng-click="sampleDataOverwrite()">
-        <button class="button button-full button-dark">
-          Reset Data to Sample Data
-        </button>
-      </ion-item>
+        <ion-item>
+          <ion-toggle ng-model="euroHour" ng-change="timeFormatChange()">24-Hour Time Display</ion-toggle>
+        </ion-item>
+        <ion-item class="item" ng-click="sampleDataOverwrite()">
+          <button class="button button-full button-dark">
+            Reset Data to Sample Data
+          </button>
+        </ion-item>
     </ion-list>
   </div>
   </ion-content>

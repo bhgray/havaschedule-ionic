@@ -2,33 +2,68 @@ angular.module('havaschedule.services', [])
 
 .service('prefServices', function($localStorage, $rootScope) {
 
+	/*
+			timeFormat:  {"HH:mm:ss" | "hh:mm:ss a"}
+	*/
+
+	var getAllPrefs = function() {
+		return $localStorage.prefs;
+	};
+
+	var getPref = function(which) {
+		if ($localStorage.prefs[which] !== undefined) {
+			return $localStorage.prefs[which];
+		}
+	};
+
+	var setPref = function(key, value) {
+		$localStorage.prefs[key] = value;
+	};
+
+	var getTimeDisplayFormat = function() {
+		if ($localStorage.prefs.timeformat === undefined) {
+			$localStorage.prefs.timeformat = "HH:mm:ss";
+		}
+		return $localStorage.prefs.timeformat;
+	};
+
+	var setTimeDisplayFormat = function(format) {
+		$localStorage.prefs.timeformat = "HH:mm:ss";
+	};
 
 	var setDebug = function(debug) {
-			$rootScope.debug = debug;
-			$rootScope.debugStatusChange = true;
+		$localStorage.debug.status = debug;
+		// TODO:  do we need this?  or just read from prefServices?
+		$rootScope.debug = $localStorage.debug.status;
+		$rootScope.debugStatusChange = true;
 	};
 
 	var isDebug = function() {
-		return $rootScope.debug;
+		return $localStorage.debug.status;
 	};
 
 	var setDebugTime = function(time) {
-			$rootScope.debugTime = time;
+		$localStorage.debug.time = time;
+		$rootScope.debugTime = time;
+		$rootScope.debugStatusChange = true;
 	};
 
 	var getDebugTime = function() {
-		return $rootScope.debugTime;
+		return $localStorage.debug.time;
 	};
 
 	var firstRun = function() {
-		return $localStorage.prefs.firstRun;
+		return $localStorage.userdata.firstRun;
 	};
 
 	var setFirstRun = function(which) {
-		$localStorage.prefs.firstRun = which;
+		$localStorage.userdata.firstRun = which;
 	};
 
 	return {
+		getAllPrefs: getAllPrefs,
+		setPref: setPref,
+		getPref: getPref,
 		firstRun: firstRun,
 		setFirstRun: setFirstRun,
 		isDebug: isDebug,
@@ -41,6 +76,7 @@ angular.module('havaschedule.services', [])
 
 .service('dataServices', function($rootScope, $localStorage, $log, prefServices, timeCalcServices) {
 
+
 	var appInit = function() {
 		$log.debug("appInit called on first run.");
 		resetUserData();
@@ -48,13 +84,19 @@ angular.module('havaschedule.services', [])
 	};
 
 	var resetUserData = function() {
-		$log.debug("resetting user data");
+		$log.debug("resetting user data and preferences");
 		$localStorage.userdata = {};
 		$localStorage.userdata.timers = getSampleTimers();
 		$localStorage.userdata.bellschedules = getSampleBellSchedules();
 		$localStorage.userdata.roster = getSampleRoster();
+		$localStorage.userdata.firstRun = false;
+		$localStorage.debug = {};
+		$localStorage.debug.status = false;
+		$localStorage.prefs = {};
+		$localStorage.prefs.timeFormat = "HH:mm:ss";
+		$localStorage.prefs.dateFormat = "yyyy-mm-dd";
 		$localStorage.prefs.selectedBellScheduleName = undefined;
-		$localStorage.prefs.chosenBellWithDates = undefined;
+		$localStorage.prefs.selectedBellWithDates = undefined;
 	};
 
 	var getSelectedBellScheduleName = function() {
