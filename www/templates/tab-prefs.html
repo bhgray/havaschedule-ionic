@@ -12,7 +12,7 @@
           Toggle Debug
         </ion-item>
         <ion-item>
-          <ion-toggle ng-model="euroHour" ng-change="timeFormatChange()">24-Hour Time Display</ion-toggle>
+          <ion-toggle ng-model="euroHour" ng-change="timeFormatChange()">24-Hour Time Display is <span ng-show="euroHour">ON</span><span ng-hide="euroHour">OFF</span></ion-toggle>
         </ion-item>
         <ion-item class="item" ng-click="sampleDataOverwrite()">
           <button class="button button-full button-dark">

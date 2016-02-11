@@ -122,8 +122,8 @@ angular.module('havaschedule.directives', [])
   }
 ])
 
-.directive('theCurrentTime', ['$interval',  '$log', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope',
-  function($interval,  $log, dateFilter, dataServices, timeCalcServices, $rootScope) {
+.directive('theCurrentTime', ['$interval',  '$log', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope', 'prefServices',
+  function($interval,  $log, dateFilter, dataServices, timeCalcServices, $rootScope, prefServices) {
     // return the directive link function. (compile function not needed)
     return function(scope, element, attrs) {
       var format;  // date format string
@@ -180,7 +180,7 @@ angular.module('havaschedule.directives', [])
               scope.updateTimerUI();
             }
         }
-        element.text(dateFilter(d, "HH:mm:ss"));
+        element.text(dateFilter(d, prefServices.getTimeDisplayFormat()));
       }
 
       stopTime = $interval(updateTime, 1000);

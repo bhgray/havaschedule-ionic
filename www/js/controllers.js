@@ -74,6 +74,10 @@ angular.module('havaschedule.controllers', [])
       */
 
       $log.debug('DisplayCtrl -> updatePeriodUI');
+      if ($rootScope.resetStatusChange) {
+        $scope.bellschedule = undefined;
+        $rootScope.resetStatusChange = false;
+      }
       if ($rootScope.bellScheduleStatusChange || $scope.bellschedule === undefined) {
         var withDates = true;
         $rootScope.bellScheduleStatusChange = false;
@@ -335,12 +339,13 @@ angular.module('havaschedule.controllers', [])
   $scope.timeFormatChange = function() {
     $scope.euroHour = !$scope.euroHour;
     if ($scope.euroHour) {
+      prefServices.setTimeDisplayFormat("HH:mm:ss");
       $scope.prefs.timeFormat = "HH:mm:ss";
-      $log.debug("24-Hour Time Format Selected  " + prefServices.getPref("timeFormat"));
     } else {
+      prefServices.setTimeDisplayFormat("h:mm:ss a");
       $scope.prefs.timeFormat = "h:mm:ss a";
-      $log.debug("12-Hour Time Format Selected:  " + prefServices.getPref("timeFormat"));
     }
+    $log.debug(($scope.euroHour ? "24 Hour" : "12 Hour") + " Time Format Selected  " + prefServices.getPref("timeFormat"));
   };
 
 

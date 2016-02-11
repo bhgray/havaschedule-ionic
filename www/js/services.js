@@ -21,14 +21,14 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getTimeDisplayFormat = function() {
-		if ($localStorage.prefs.timeformat === undefined) {
-			$localStorage.prefs.timeformat = "HH:mm:ss";
+		if ($localStorage.prefs.timeFormat === undefined) {
+			$localStorage.prefs.timeFormat = "HH:mm:ss";
 		}
-		return $localStorage.prefs.timeformat;
+		return $localStorage.prefs.timeFormat;
 	};
 
 	var setTimeDisplayFormat = function(format) {
-		$localStorage.prefs.timeformat = "HH:mm:ss";
+		$localStorage.prefs.timeFormat = format;
 	};
 
 	var setDebug = function(debug) {
@@ -69,7 +69,9 @@ angular.module('havaschedule.services', [])
 		isDebug: isDebug,
 		setDebug: setDebug,
 		getDebugTime: getDebugTime,
-		setDebugTime: setDebugTime
+		setDebugTime: setDebugTime,
+		getTimeDisplayFormat: getTimeDisplayFormat,
+		setTimeDisplayFormat: setTimeDisplayFormat
 	};
 })
 
@@ -85,6 +87,7 @@ angular.module('havaschedule.services', [])
 
 	var resetUserData = function() {
 		$log.debug("resetting user data and preferences");
+		$rootScope.resetStatusChange = true;
 		$localStorage.userdata = {};
 		$localStorage.userdata.timers = getSampleTimers();
 		$localStorage.userdata.bellschedules = getSampleBellSchedules();
