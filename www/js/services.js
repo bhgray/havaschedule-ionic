@@ -52,6 +52,14 @@ angular.module('havaschedule.services', [])
 		return $localStorage.debug.time;
 	};
 
+	var speedUpMode = function() {
+		return $localStorage.debug.speedUpMode;
+	};
+
+	var setSpeedUpMode = function(enabled) {
+		$localStorage.debug.speedUpMode = enabled;
+	};
+
 	var firstRun = function() {
 		return $localStorage.userdata.firstRun;
 	};
@@ -70,6 +78,8 @@ angular.module('havaschedule.services', [])
 		setDebug: setDebug,
 		getDebugTime: getDebugTime,
 		setDebugTime: setDebugTime,
+		speedUpMode: speedUpMode,
+		setSpeedUpMode: setSpeedUpMode,
 		getTimeDisplayFormat: getTimeDisplayFormat,
 		setTimeDisplayFormat: setTimeDisplayFormat
 	};
@@ -95,6 +105,7 @@ angular.module('havaschedule.services', [])
 		$localStorage.userdata.firstRun = false;
 		$localStorage.debug = {};
 		$localStorage.debug.status = false;
+		$localStorage.debug.speedUpMode = false;
 		$localStorage.prefs = {};
 		$localStorage.prefs.timeNotificationList = undefined;
 		$localStorage.prefs.timeFormat = "HH:mm:ss";
@@ -266,7 +277,13 @@ angular.module('havaschedule.services', [])
 		if (prefServices.isDebug())
 		{
 			var elapsed = new Date().getTime() - $rootScope.appStartTime.getTime();
+			if (prefServices.speedUpMode()) {
+				elapsed *= 100;
+			}
 			result = new Date(prefServices.getDebugTime().getTime() + elapsed);
+			if (prefServices.speedUpMode()) {
+				result.setSeconds(0);
+			}
 		}
 		return result;
 	};

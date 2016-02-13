@@ -283,7 +283,8 @@ angular.module('havaschedule.controllers', [])
     $scope.debug = function() {
       $scope.debugData = {
         timeData: prefServices.getDebugTime(),
-        debugEnabled: prefServices.isDebug()
+        debugEnabled: prefServices.isDebug(),
+        speedUpMode: prefServices.speedUpMode()
       };
       $scope.debugmodal.show();
     };
@@ -299,8 +300,10 @@ angular.module('havaschedule.controllers', [])
         $scope.debugData.timeData.setFullYear($rootScope.appStartTime.getFullYear());
         $scope.debugData.timeData.setMonth($rootScope.appStartTime.getMonth());
         $scope.debugData.timeData.setDate($rootScope.appStartTime.getDate());
+        $scope.debugData.timeData.setSeconds(0);
         prefServices.setDebugTime($scope.debugData.timeData);
       }
+      prefServices.setSpeedUpMode($scope.debugData.speedUpMode);
       prefServices.setDebug($scope.debugData.debugEnabled);
       $log.debug('Doing debug', $scope.debugData);
       $scope.closeDebug();

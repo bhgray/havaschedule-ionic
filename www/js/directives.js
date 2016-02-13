@@ -168,9 +168,10 @@ angular.module('havaschedule.directives', [])
 
         if (updateRequired) {
           dataServices.setTimeNotificationList(undefined);
-          scope.updateDateUI();
-          scope.updatePeriodUI();
-          scope.updateTimerUI();
+          scope.updateUI();
+          // scope.updateDateUI();
+          // scope.updatePeriodUI();
+          // scope.updateTimerUI();
           $rootScope.debugStatusChange = false;
           $rootScope.bellScheduleStatusChange = false;
           updateRequired = false;
@@ -181,9 +182,10 @@ angular.module('havaschedule.directives', [])
             var matchingTimes = list.find(findTimeInArray);
             if (matchingTimes !== undefined) {
               $log.debug("counttimer (directive.js):  matchingTimes found");
-              scope.updateDateUI();
-              scope.updatePeriodUI();
-              scope.updateTimerUI();
+              scope.updateUI();
+              // scope.updateDateUI();
+              // scope.updatePeriodUI();
+              // scope.updateTimerUI();
             }
         }
         element.text(dateFilter(d, prefServices.getTimeDisplayFormat()));
