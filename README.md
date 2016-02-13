@@ -156,3 +156,10 @@
   * currently the timeNotificationList is stored in $rootscope, but we should put it into dataServices and create it when we create the bellschedule with dates.
   * NOTE on directive naming conventions:  directive can be named countTimer (camel case), then used as <count-timer> OR just make them the same.  Not sure why...
   * Done?  refactored the time notification list and the calls to updateUI.  Might have to check into when and how the timer UI gets refreshed though later....
+
+  * branch 0027_color_warning
+  * idea: have the period card turn yellow if 10 minutes remain, and red if 2 minutes remain
+  * create another dataServices method that creates a data structure just based on the current period
+  * {warning1: TIME1; warning2: TIME2}
+  * this way a user can later change what the warnings are....
+  * create this data structure at the beginning of a period when periodUI()

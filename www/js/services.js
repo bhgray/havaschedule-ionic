@@ -103,11 +103,11 @@ angular.module('havaschedule.services', [])
 		$localStorage.userdata.bellschedules = getSampleBellSchedules();
 		$localStorage.userdata.roster = getSampleRoster();
 		$localStorage.userdata.firstRun = false;
+		$localStorage.userdata.timeNotificationList = undefined;
 		$localStorage.debug = {};
 		$localStorage.debug.status = false;
 		$localStorage.debug.speedUpMode = false;
 		$localStorage.prefs = {};
-		$localStorage.prefs.timeNotificationList = undefined;
 		$localStorage.prefs.timeFormat = "HH:mm:ss";
 		$localStorage.prefs.dateFormat = "yyyy-mm-dd";
 		$localStorage.prefs.selectedBellScheduleName = undefined;
@@ -229,10 +229,10 @@ angular.module('havaschedule.services', [])
 					]},
 					{name: 'Debug',
 						periods: [
-							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 0.5},
-							{period: 1, name: 'Period 1', start: '07:51:00', end: '', duration: 0.5},
-							{period: 2, name: 'Period 2', start: '07:52:00', end: '', duration: 0.5},
-							{period: 3, name: 'Period 3', start: '07:53:00', end: '', duration: 0.5}
+							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 11},
+							{period: 1, name: 'Period 1', start: '08:02:00', end: '', duration: 11},
+							{period: 2, name: 'Period 2', start: '08:14:00', end: '', duration: 11},
+							{period: 3, name: 'Period 3', start: '08:26:00', end: '', duration: 11}
 						]},
 					{name: 'Midterms',
 						periods: [
@@ -303,15 +303,24 @@ angular.module('havaschedule.services', [])
 	};
 
 	var setTimeNotificationList = function(theList) {
-		$localStorage.prefs.timeNotificationList = theList;
+		$localStorage.userdata.timeNotificationList = theList;
 	};
 
 	var getTimeNotificationList = function() {
-		if ($localStorage.prefs.timeNotificationList === undefined) {
+		if ($localStorage.userdata.timeNotificationList === undefined) {
 			setTimeNotificationList(timeCalcServices.getTimeNotificationList(getSelectedBellWithDates()));
 		}
-		return $localStorage.prefs.timeNotificationList;
+		return $localStorage.userdata.timeNotificationList;
 	};
+
+	var getCurrentWarningNotificationList = function() {
+		return $localStorage.userdata.currentWarningList;
+	};
+
+	var setCurrentWarningNotificationList = function(theList) {
+		$localStorage.userdata.currentWarningList = theList;
+	};
+
 
 	return {
 		getBellSchedules: getBellSchedules,
@@ -325,7 +334,9 @@ angular.module('havaschedule.services', [])
 		setTimeNotificationList: setTimeNotificationList,
 		getTimeNotificationList: getTimeNotificationList,
 		appInit: appInit,
-		resetUserData: resetUserData
+		resetUserData: resetUserData,
+		getCurrentWarningNotificationList: getCurrentWarningNotificationList,
+		setCurrentWarningNotificationList: setCurrentWarningNotificationList
 	};
 })
 
@@ -379,6 +390,15 @@ angular.module('havaschedule.services', [])
 
 	var isEqualDates = function(d1, d2) {
 		return d1.getTime() === d2.getTime();
+	};
+
+	var isEqualDatesToMinutes = function(d1, d2) {
+		return ((d1.getHours() === d2.getHours()) &&
+			(d1.getMinutes() === d2.getMinutes()));
+	};
+
+	var isLessThanOrEqualDates = function(d1, d2) {
+			return isEqualDatesToMinutes(d1, d2) || isBeforeDates(d1, d2);
 	};
 
 	/*
@@ -498,6 +518,8 @@ angular.module('havaschedule.services', [])
 		getTimeFromString: getTimeFromString,
 		getRosteredClass: getRosteredClass,
 		isBeforeDates: isBeforeDates,
-		countdownFormatString: countdownFormatString
+		countdownFormatString: countdownFormatString,
+		isEqualDatesToMinutes: isEqualDatesToMinutes,
+		isLessThanOrEqualDates: isLessThanOrEqualDates
 	};
 });

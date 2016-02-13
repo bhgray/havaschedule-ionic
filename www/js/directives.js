@@ -151,7 +151,6 @@ angular.module('havaschedule.directives', [])
           return false;
       }
 
-      // used to update the UI
       function updateTime() {
         var d = dataServices.getCurrentTime();
         var list;
@@ -169,9 +168,6 @@ angular.module('havaschedule.directives', [])
         if (updateRequired) {
           dataServices.setTimeNotificationList(undefined);
           scope.updateUI();
-          // scope.updateDateUI();
-          // scope.updatePeriodUI();
-          // scope.updateTimerUI();
           $rootScope.debugStatusChange = false;
           $rootScope.bellScheduleStatusChange = false;
           updateRequired = false;
@@ -183,9 +179,15 @@ angular.module('havaschedule.directives', [])
             if (matchingTimes !== undefined) {
               $log.debug("counttimer (directive.js):  matchingTimes found");
               scope.updateUI();
-              // scope.updateDateUI();
-              // scope.updatePeriodUI();
-              // scope.updateTimerUI();
+            }
+            // check whether to trigger a warning for the period end
+            var warningTimes = dataServices.getCurrentWarningNotificationList();
+            if (warningTimes !== undefined) {
+              if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning1, d)) {
+                scope.setWarning(1);
+              } else if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning2, d)) {
+                scope.setWarning(2);
+              }
             }
         }
         element.text(dateFilter(d, prefServices.getTimeDisplayFormat()));

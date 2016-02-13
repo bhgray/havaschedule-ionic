@@ -63,13 +63,13 @@ angular.module('havaschedule.controllers', [])
     };
 
     $scope.updatePeriodUI = function() {
+      $scope.warning1 = false;
+      $scope.warning2 = false;
       $scope.calculateDateTimeFormats();
       /*
       bellschedule is a two-element array.
       Element 1:  an array of configuration details
       Element 2:  an array of periods
-
-      current bellschedule with dates is cached in $scope.bellschedule.
       Only update this is needed.
       */
 
@@ -129,6 +129,16 @@ angular.module('havaschedule.controllers', [])
           $scope.passingTimeDiv = false;
           $scope.classTimers = true;
           // used in display.html directly
+          var warning1Time = new Date($scope.activePeriod.period.end.getTime());
+          warning1Time.setMinutes(warning1Time.getMinutes() - 10);
+          var warning2Time = new Date($scope.activePeriod.period.end.getTime());
+          warning2Time.setMinutes(warning2Time.getMinutes() - 2);
+          var warningTimeList = {
+            warning1: warning1Time,
+            warning2: warning2Time
+          };
+          $log.debug('warningTimeList set ->' + warningTimeList);
+          dataServices.setCurrentWarningNotificationList(warningTimeList);
           $scope.periodStartString = dateFilter($scope.activePeriod.period.start, $scope.timeFormatNoSeconds);
           $scope.periodEndString = dateFilter($scope.activePeriod.period.end, $scope.timeFormatNoSeconds);
 
@@ -136,6 +146,16 @@ angular.module('havaschedule.controllers', [])
           $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, $scope.dateTimeFormat);
           $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, $scope.dateTimeFormat);
         }
+      }
+    };
+
+    $scope.setWarning = function(which){
+      if (which === 1) {
+        $scope.warning2 = false;
+        $scope.warning1 = true;
+      } else if (which === 2) {
+        $scope.warning1 = false;
+        $scope.warning2 = true;
       }
     };
 
