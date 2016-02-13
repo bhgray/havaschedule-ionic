@@ -96,6 +96,7 @@ angular.module('havaschedule.services', [])
 		$localStorage.debug = {};
 		$localStorage.debug.status = false;
 		$localStorage.prefs = {};
+		$localStorage.prefs.timeNotificationList = undefined;
 		$localStorage.prefs.timeFormat = "HH:mm:ss";
 		$localStorage.prefs.dateFormat = "yyyy-mm-dd";
 		$localStorage.prefs.selectedBellScheduleName = undefined;
@@ -270,11 +271,6 @@ angular.module('havaschedule.services', [])
 		return result;
 	};
 
-
-	/*
-		issue:  if the bellschedule has already been calculated with dates,
-		then
-	*/
 	var calcBellScheduleDates = function(bellschedule) {
 		var periodList = bellschedule.periods;
 		for (var periodID in periodList) {
@@ -289,6 +285,17 @@ angular.module('havaschedule.services', [])
 		return bellschedule;
 	};
 
+	var setTimeNotificationList = function(theList) {
+		$localStorage.prefs.timeNotificationList = theList;
+	};
+
+	var getTimeNotificationList = function() {
+		if ($localStorage.prefs.timeNotificationList === undefined) {
+			setTimeNotificationList(timeCalcServices.getTimeNotificationList(getSelectedBellWithDates()));
+		}
+		return $localStorage.prefs.timeNotificationList;
+	};
+
 	return {
 		getBellSchedules: getBellSchedules,
 		getRoster: getRoster,
@@ -298,6 +305,8 @@ angular.module('havaschedule.services', [])
 		setSelectedBellScheduleName: setSelectedBellScheduleName,
 		setSelectedBellWithDates: setSelectedBellWithDates,
 		getSelectedBellWithDates: getSelectedBellWithDates,
+		setTimeNotificationList: setTimeNotificationList,
+		getTimeNotificationList: getTimeNotificationList,
 		appInit: appInit,
 		resetUserData: resetUserData
 	};

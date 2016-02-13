@@ -12,7 +12,7 @@
       <div class="item">Next class: <span class="standout">{{theClass}}</span><span ng-show="roomSpecified">  in room {{theRoom}}</span></div>
       <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
-        {{theClass}} starts in <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer>
+        {{theClass}} starts in <count-timer date={{periodStartDateTimeString}}> &nbsp;</count-timer>
       </div>
     </div>
 
@@ -20,11 +20,11 @@
       <div class="item item-divider"><span class="minorstandout">{{thePeriod}}</span>:  <span class="standout">{{theClass}}</span><span ng-show="roomSpecified"> in room {{theRoom}}</span></div>
       <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
-        Started <counttimer date={{periodStartDateTimeString}}> &nbsp;</counttimer> ago (at {{periodStartString}})
+        Started <count-timer date={{periodStartDateTimeString}}> &nbsp;</count-timer> ago (at {{periodStartString}})
       </div>
       <div class="item item-icon-left">
         <i class="icon ion-clock"></i>
-        Ends in <counttimer date={{periodEndDateTimeString}}> &nbsp;</counttimer> (at {{periodEndString}})
+        Ends in <count-timer date={{periodEndDateTimeString}}> &nbsp;</count-timer> (at {{periodEndString}})
       </div>
     </div>
 

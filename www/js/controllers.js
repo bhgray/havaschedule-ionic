@@ -290,16 +290,19 @@ angular.module('havaschedule.controllers', [])
 
     // Perform the debug toggle action when the user submits the debug form
     $scope.doDebug = function() {
-      // $log.debug('Doing debug', $scope.debugData);
       $rootScope.debugStatusChange = true;
       // incrementing the app system time in debug mode uses
       // the delta from appStartTime, so we need to reset this...
       if ($scope.debugData.debugEnabled) {
         $rootScope.appStartTime = new Date();
         $log.debug("run app.js at " + dateFilter($rootScope.appStartTime, "yyyy-mm-dd HH:mm:ss"));
+        $scope.debugData.timeData.setFullYear($rootScope.appStartTime.getFullYear());
+        $scope.debugData.timeData.setMonth($rootScope.appStartTime.getMonth());
+        $scope.debugData.timeData.setDate($rootScope.appStartTime.getDate());
         prefServices.setDebugTime($scope.debugData.timeData);
       }
       prefServices.setDebug($scope.debugData.debugEnabled);
+      $log.debug('Doing debug', $scope.debugData);
       $scope.closeDebug();
     };
 

@@ -143,3 +143,15 @@
   * 0022_localstorage using ngStorage
   * new branch "display_redesign" to change the display a bit....
   * http://stackoverflow.com/questions/927358/how-do-you-undo-the-last-commit
+## 2016-02-13-1042-SAT
+  * haven't been writing in this log as much -- using havalinasw.com/bugz
+  * branch 0026_ui_refresh_2 ugh again.
+  * the-current-time directive in directives.js uses a list of "alarms" to determine whether it needs to update the ui.
+  * the list consists of all the start and end times of each period, and should be created when:
+    - the bellschedule choice changes
+    - the app is opened on a different day
+      + recall that bellschedules are stored without specific times, just starting times and durations.
+      + they are called from memory, and are "reconstituted" with dates based on today's date.  that way alarms run as normal.
+      + TODO:  check to see if the date itself is actually ever used!
+  * currently the timeNotificationList is stored in $rootscope, but we should put it into dataServices and create it when we create the bellschedule with dates.
+  * NOTE on directive naming conventions:  directive can be named countTimer (camel case), then used as <count-timer> OR just make them the same.  Not sure why...

@@ -2,7 +2,9 @@ angular.module('havaschedule.directives', [])
 
 // note:  http://codepen.io/garethdweaver/pen/eNpWBb for timer ideas
 
-.directive('counttimer', ['$interval', '$log', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
+// directive <count-timer> used in the passingCard and scheduleCard.  No alarm --
+// just a countdown or countup timer
+.directive('countTimer', ['$interval', '$log', 'dateFilter', 'timeCalcServices', 'dataServices', '$timeout', '$rootScope',
   function($interval, $log, dateFilter, timeCalcServices, dataServices, $timeout, $rootScope) {
 
     return function(scope, element, attrs) {
@@ -58,6 +60,7 @@ angular.module('havaschedule.directives', [])
     };
 }])
 
+// directive <timer-display> is used in the timerCard.  allows for alarms.
 .directive('timerDisplay', ['$interval', '$log', '$cordovaLocalNotification', '$ionicPopup', 'dateFilter', 'timeCalcServices', 'dataServices',
   function($interval, $log, $cordovaLocalNotification, $ionicPopup, dateFilter, timeCalcServices, dataServices) {
     return {
@@ -122,6 +125,10 @@ angular.module('havaschedule.directives', [])
   }
 ])
 
+
+// directive <the-current-time> used in the nowcard.  main timing mechanism to
+// alert others to necessary UI update based on time of day.
+
 .directive('theCurrentTime', ['$interval',  '$log', 'dateFilter', 'dataServices', 'timeCalcServices', '$rootScope', 'prefServices',
   function($interval,  $log, dateFilter, dataServices, timeCalcServices, $rootScope, prefServices) {
     // return the directive link function. (compile function not needed)
@@ -132,6 +139,9 @@ angular.module('havaschedule.directives', [])
       // searches an array to match a given time
       //  might need to be a bit imprecise about matching - we
       // don't know if we will get this call at the very second it's due...
+      // hmm.... but note that this will find that time over and over again for
+      // one minute....  perhaps instead of just comparing hour and minute,
+      // also compare seconds but allow for 10 seconds?  experiment with window.
       function findTimeInArray(element, index, array) {
           var d = dataServices.getCurrentTime();
           // $log.debug('findTimeInArray comparing ' + d + ' and ' + element);
@@ -149,20 +159,15 @@ angular.module('havaschedule.directives', [])
         // time notification list...  see if an update is required to the UI.
         var updateRequired = false;
         if ($rootScope.debugStatusChange) {
-          updateRequired = true;
           $log.debug("counttimer (directive.js):  debugStatusChange");
+          updateRequired = true;
         } else if ($rootScope.bellScheduleStatusChange) {
           $log.debug("counttimer (directive.js):  bellScheduleStatusChange");
           updateRequired = true;
         }
+
         if (updateRequired) {
-          $rootScope.timeNotificationList = undefined;
-        }
-        if ($rootScope.timeNotificationList === undefined) {
-          $rootScope.timeNotificationList = timeCalcServices.getTimeNotificationList(dataServices.getSelectedBellWithDates());
-        }
-        list = $rootScope.timeNotificationList;
-        if (updateRequired) {
+          dataServices.setTimeNotificationList(undefined);
           scope.updateDateUI();
           scope.updatePeriodUI();
           scope.updateTimerUI();
@@ -170,6 +175,7 @@ angular.module('havaschedule.directives', [])
           $rootScope.bellScheduleStatusChange = false;
           updateRequired = false;
         }
+        list = dataServices.getTimeNotificationList();
         // check once per minute if we are in a new period or passing time
         if (d.getSeconds() === 0) {
             var matchingTimes = list.find(findTimeInArray);
