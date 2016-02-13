@@ -6,5 +6,8 @@
     "ionic-platform-web-client": "~0.2.1",
     "cordova": "~3.4.0",
     "plugin": "^3.1.0"
+  },
+  "dependencies": {
+    "angular-logex": "^0.0.10"
   }
 }

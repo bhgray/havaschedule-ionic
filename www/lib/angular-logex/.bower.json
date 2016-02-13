@@ -1,0 +1,37 @@
+{
+  "name": "angular-logex",
+  "version": "0.0.10",
+  "main": "./dist/log-ex-unobtrusive.js",
+  "dependencies": {
+    "angular": ">= 1.1.2"
+  },
+  "ignore": [
+    "**/.*",
+    "_*",
+    "node_modules",
+    "config",
+    "libs",
+    "test",
+    "sample_app",
+    "DEVELOP.md",
+    "CHANGELOG.md",
+    "Gruntfile.js",
+    "browserstack.json",
+    "composer.json",
+    "package.json",
+    "src",
+    "coverage",
+    ".*"
+  ],
+  "homepage": "https://github.com/lwhiteley/AngularLogExtender",
+  "_release": "0.0.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.10",
+    "commit": "aa25a291de8383a551171eab236d003086b5baf5"
+  },
+  "_source": "git://github.com/lwhiteley/AngularLogExtender.git",
+  "_target": "^0.0.10",
+  "_originalSource": "angular-logex",
+  "_direct": true
+}

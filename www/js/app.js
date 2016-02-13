@@ -6,8 +6,10 @@ angular.module('havaschedule', [
   'havaschedule.services',
   'havaschedule.directives',
   'ngCordova',
-  'ngStorage'
+  'ngStorage',
+  'log.ex.uo'
 ])
+
 
 .run(function($ionicPlatform, $rootScope, dateFilter, dataServices, prefServices) {
   $ionicPlatform.ready(function() {
@@ -48,15 +50,39 @@ angular.module('havaschedule', [
 
 })
 
+
+/***********************************************************************
+
+  loggin capabilities.  Old functionality (commented) $logProvider is
+  angularjs standard.
+
+  Added logExProvider via https://github.com/lwhiteley/AngularLogExtender
+  using bower install.
+
+*/
+
+// .config(['$logProvider', function($logProvider){
+//     console.debug('app.js config $logProvider');
+//     $logProvider.debugEnabled(true);
+// }])
+
+.config(['logExProvider', function(logExProvider) {
+    logExProvider.enableLogging(true);
+    logExProvider.overrideLogPrefix(function (className) {
+        var $injector = angular.injector([ 'ng' ]);
+        var $filter = $injector.get( '$filter' );
+        var separator = " >> ";
+        var format = "yyyy-MMM-dd-HH:mm:ss:sss";
+        var now = $filter('date')(new Date(), format);
+        return "" + now + (!angular.isString(className) ? "" : "::" + className) + separator;
+    });
+}])
+
+
 // see:  http://stackoverflow.com/questions/27874855/how-to-place-ionic-tabs-at-the-bottom-of-the-screen
 .config(['$ionicConfigProvider', function($ionicConfigProvider,$log) {
     console.debug('app.js config $ionicConfigProvider');
     $ionicConfigProvider.tabs.position('top'); // other values: bottom
-}])
-
-.config(['$logProvider', function($logProvider){
-    console.debug('app.js config $logProvider');
-    $logProvider.debugEnabled(true);
 }])
 
 // TODO:  this will be for persistent preferences....
