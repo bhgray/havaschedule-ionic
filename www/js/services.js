@@ -257,17 +257,23 @@ angular.module('havaschedule.services', [])
 	};
 
 	var getSampleRoster = function() {
-		var roster = [
-			{period: 0, name: 'Advisory 205', room: '220'},
-			{period: 1, name: 'Prep', room: ''},
-			{period: 2, name: 'Duty', room: ''},
-			{period: 3, name: 'CS1 (HS)', room: '220'},
-			{period: 4, name: 'WebDev', room: '220'},
-			{period: 5, name: 'Lunch', room: ''},
-			{period: 6, name: 'CS1 (MS)', room: '220'},
-			{period: 7, name: 'APCS', room: '220'},
-			{period: 8, name: 'Discrete Math', room: '220'}
-		];
+		var roster = {
+			name: 'SY2015 Roster',
+			entries: [
+				{period: 0, name: 'Advisory 205', room: '220'},
+				{period: 1, name: 'Prep', room: ''},
+				{period: 2, name: 'Duty', room: ''},
+				{period: 3, name: 'CS1 (HS)', room: '220'},
+				{period: 4, name: 'WebDev', room: '220'},
+				{period: 5, name: 'Lunch', room: ''},
+				{period: 6, name: 'CS1 (MS)', room: '220'},
+				{period: 7, name: 'APCS', room: '220'},
+				{period: 8, name: 'Discrete Math', room: '220'}
+		]};
+
+		// for use later when we want to return a list of rosters
+		var rosters = [roster];
+
 		return roster;
 	};
 
@@ -479,10 +485,10 @@ angular.module('havaschedule.services', [])
 	var getRosteredClass = function(period, roster) {
 		var periodNumber = period.period;
 		var foundClass;
-		for (var courseID in roster) {
-			var rosteredPeriodID = roster[courseID].period;
+		for (var courseID in roster.entries) {
+			var rosteredPeriodID = roster.entries[courseID].period;
 			if (rosteredPeriodID === periodNumber) {
-				return roster[courseID];
+				return roster.entries[courseID];
 			}
 		}
 		return foundClass;
