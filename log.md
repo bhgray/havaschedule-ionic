@@ -169,3 +169,6 @@
   * so this works, but is ugly.  Also TODO we want to refactor to allow turning the warnings on and off and setting different times for the warnings.  Also, blinking??? :-)
   * GIT IMPORTANT:  change to branch naming.  use prefix "iss" (for "issue") followed by bugz number.  If branching off that for some reason, use v numbers, e.g., iss27, iss27v1, iss27v2.
   * GIT  once we have version 1.0, create a "next" branch for all dev related to next update....
+
+  * branch:  iss6 --> roster editing!
+  * hmmm but, perhaps do iss28 object oriented refactoring first???  ugh.  boring.
