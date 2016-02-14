@@ -163,3 +163,7 @@
   * {warning1: TIME1; warning2: TIME2}
   * this way a user can later change what the warnings are....
   * create this data structure at the beginning of a period when periodUI()
+## 2016-02-14-0715-SUN
+  * DOM was not updating via the call to setWarning in the DisplayCtrl
+  * ISSUE:  must set the scope variables directly from the directive to trigger the apply() cycle and thus update the ng-class attribute for the warnings.  In the document, if a bound scope variable is wrapped in {{}}, then Angular automatically sets a watch for it, and updates (via apply() and digest()) if necessary.  But, this variable is inside ng-class, so not automatically watched IF set in the controller.  Every scope variable change from in a directive IS automatically watched though, so the apply() cycle is invoked.  See:  theCurrentTime directive, checkForWarnings and updateTime.
+  * so this works, but is ugly.  Also TODO we want to refactor to allow turning the warnings on and off and setting different times for the warnings.  Also, blinking??? :-)

@@ -91,9 +91,6 @@ angular.module('havaschedule.controllers', [])
       var roster = dataServices.getRoster();
       $scope.activePeriod = timeCalcServices.calcBellUsingDates($scope.bellschedule, dataServices.getCurrentTime());
       var theRosteredClass;
-      // $log.debug('updatePeriodUI found:  ' + activePeriod.status);
-
-
 
       if ($scope.activePeriod.status == 'not during school hours') {        // not during school hours
         $log.debug('activating non school hours mode');
@@ -130,6 +127,8 @@ angular.module('havaschedule.controllers', [])
           $scope.classTimers = true;
           // used in display.html directly
           var warning1Time = new Date($scope.activePeriod.period.end.getTime());
+          // TODO:  refactor to allow for custom warnings (get warning1 and warning2
+          //  minute values from prefServices....)
           warning1Time.setMinutes(warning1Time.getMinutes() - 10);
           var warning2Time = new Date($scope.activePeriod.period.end.getTime());
           warning2Time.setMinutes(warning2Time.getMinutes() - 2);
@@ -146,16 +145,6 @@ angular.module('havaschedule.controllers', [])
           $scope.periodStartDateTimeString = dateFilter($scope.activePeriod.period.start, $scope.dateTimeFormat);
           $scope.periodEndDateTimeString = dateFilter($scope.activePeriod.period.end, $scope.dateTimeFormat);
         }
-      }
-    };
-
-    $scope.setWarning = function(which){
-      if (which === 1) {
-        $scope.warning2 = false;
-        $scope.warning1 = true;
-      } else if (which === 2) {
-        $scope.warning1 = false;
-        $scope.warning2 = true;
       }
     };
 

@@ -168,6 +168,7 @@ angular.module('havaschedule.directives', [])
         if (updateRequired) {
           dataServices.setTimeNotificationList(undefined);
           scope.updateUI();
+          checkForWarnings(d);
           $rootScope.debugStatusChange = false;
           $rootScope.bellScheduleStatusChange = false;
           updateRequired = false;
@@ -180,18 +181,25 @@ angular.module('havaschedule.directives', [])
               $log.debug("counttimer (directive.js):  matchingTimes found");
               scope.updateUI();
             }
-            // check whether to trigger a warning for the period end
-            var warningTimes = dataServices.getCurrentWarningNotificationList();
-            if (warningTimes !== undefined) {
-              if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning1, d)) {
-                scope.setWarning(1);
-              } else if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning2, d)) {
-                scope.setWarning(2);
-              }
-            }
+          checkForWarnings(d);
         }
         element.text(dateFilter(d, prefServices.getTimeDisplayFormat()));
       }
+
+      var checkForWarnings = function(theTime) {
+        // check whether to trigger a warning for the period end
+        var warningTimes = dataServices.getCurrentWarningNotificationList();
+        if (warningTimes !== undefined) {
+          if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning1, theTime)) {
+            scope.warning2 = false;
+            scope.warning1 = true;
+          }
+          if (timeCalcServices.isLessThanOrEqualDates(warningTimes.warning2, theTime)) {
+            scope.warning1 = false;
+            scope.warning2 = true;
+          }
+        }
+      };
 
       stopTime = $interval(updateTime, 1000);
 
