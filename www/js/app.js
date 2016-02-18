@@ -5,6 +5,7 @@ angular.module('havaschedule', [
   'havaschedule.controllers',
   'havaschedule.services',
   'havaschedule.directives',
+  'havaschedule.models',
   'ngCordova',
   'ngStorage',
   'log.ex.uo'

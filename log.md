@@ -172,3 +172,13 @@
 
   * branch:  iss6 --> roster editing!
   * hmmm but, perhaps do iss28 object oriented refactoring first???  ugh.  boring.
+
+### OK.  iss28.
+    * created new models.js to hold factories for all the different OO models.
+    * refactored dataServices and timeCalcServices to use a slightly different version of Roster (placeholder for ability to use multiple rosters)
+    * next step: start to transfer all data transformations to the models....
+      - can only transfer functions that have no external dependencies.... we want the models to be completely independent
+      - calcBellScheduleDates (requires timeCalcServices)
+      - timeNotificationList?
+      - warningList?
+      - getRosteredClass

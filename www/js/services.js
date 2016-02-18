@@ -260,15 +260,15 @@ angular.module('havaschedule.services', [])
 		var roster = {
 			name: 'SY2015 Roster',
 			entries: [
-				{period: 0, name: 'Advisory 205', room: '220'},
-				{period: 1, name: 'Prep', room: ''},
-				{period: 2, name: 'Duty', room: ''},
-				{period: 3, name: 'CS1 (HS)', room: '220'},
-				{period: 4, name: 'WebDev', room: '220'},
-				{period: 5, name: 'Lunch', room: ''},
-				{period: 6, name: 'CS1 (MS)', room: '220'},
-				{period: 7, name: 'APCS', room: '220'},
-				{period: 8, name: 'Discrete Math', room: '220'}
+				{period: 0, name: 'Advisory 205', location: '220'},
+				{period: 1, name: 'Prep', location: ''},
+				{period: 2, name: 'Duty', location: ''},
+				{period: 3, name: 'CS1 (HS)', location: '220'},
+				{period: 4, name: 'WebDev', location: '220'},
+				{period: 5, name: 'Lunch', location: ''},
+				{period: 6, name: 'CS1 (MS)', location: '220'},
+				{period: 7, name: 'APCS', location: '220'},
+				{period: 8, name: 'Discrete Math', location: '220'}
 		]};
 
 		// for use later when we want to return a list of rosters
@@ -373,7 +373,14 @@ angular.module('havaschedule.services', [])
 
 .service('timeCalcServices', function(dateFilter, $log) {
 
-
+	var isToday = function(date) {
+		var today = new Date();
+		if (!(date instanceof Date)) { throw 'Parameter exception:  needs a date object';}
+		return (date.getFullYear() === today.getFullYear() &&
+						date.getMonth() === today.getMonth() &&
+						date.getDay() === today.getDay()
+		);
+	};
 
 	var getTimeNotificationList = function(bell) {
 		var times = [];

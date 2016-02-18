@@ -66,12 +66,6 @@ angular.module('havaschedule.controllers', [])
       $scope.warning1 = false;
       $scope.warning2 = false;
       $scope.calculateDateTimeFormats();
-      /*
-      bellschedule is a two-element array.
-      Element 1:  an array of configuration details
-      Element 2:  an array of periods
-      Only update this is needed.
-      */
 
       $log.debug('DisplayCtrl -> updatePeriodUI');
       if ($rootScope.resetStatusChange) {
@@ -105,7 +99,7 @@ angular.module('havaschedule.controllers', [])
         theRosteredClass = timeCalcServices.getRosteredClass($scope.activePeriod.period, roster);
         $scope.theClass = theRosteredClass.name;
         $scope.thePeriod = $scope.activePeriod.period.name;
-        $scope.theRoom = theRosteredClass.room;
+        $scope.theRoom = theRosteredClass.location;
         $scope.roomSpecified = true;
 
         if ($scope.theRoom.trim().length < 2) {
