@@ -245,6 +245,19 @@ angular.module('havaschedule.services', [])
 							{period: 7, name: 'Period 7', start: '13:07:00', end: '', duration: 33},
 							{period: 8, name: 'Period 8', start: '13:43:00', end: '', duration: 33},
 							{period: 1, name: 'Period 1', start: '14:19:00', end: '', duration: 33}
+						]},
+					{name: 'PM Assembly',
+						periods: [
+							{period: 0, name: 'Advisory', start: '07:50:00', end: '', duration: 19},
+							{period: 1, name: 'Period 1', start: '08:12:00', end: '', duration: 39},
+							{period: 2, name: 'Period 2', start: '08:54:00', end: '', duration: 39},
+							{period: 3, name: 'Period 3', start: '09:36:00', end: '', duration: 39},
+							{period: 4, name: 'Period 4', start: '10:18:00', end: '', duration: 39},
+							{period: 5, name: 'Period 5', start: '11:00:00', end: '', duration: 39},
+							{period: 6, name: 'Period 6', start: '11:42:00', end: '', duration: 39},
+							{period: 7, name: 'Period 7', start: '12:24:00', end: '', duration: 39},
+							{period: 8, name: 'Period 8', start: '13:06:00', end: '', duration: 39},
+							{period: 9, name: 'Assembly', start: '13:45:00', end: '', duration: 69}
 						]}
 				];
 
